@@ -1,23 +1,11 @@
+import { setAuthTokenGetter } from "@workspace/api-client-react";
+
 /**
- * Patches the global fetch to inject the JWT token from localStorage.
- * This ensures generated Orval React Query hooks work seamlessly with authentication.
+ * Registers the JWT token getter with the generated API client.
+ * This ensures all generated Orval React Query hooks automatically
+ * send the Authorization header without patching global fetch
+ * (which would break Content-Type and other headers).
  */
 export function setupApiInterceptor() {
-  const originalFetch = window.fetch;
-  
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-    const token = localStorage.getItem("samaj_token");
-    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-    
-    if (token && url.startsWith("/api")) {
-      const newInit = { ...init };
-      newInit.headers = {
-        ...newInit.headers,
-        Authorization: `Bearer ${token}`
-      };
-      return originalFetch(input, newInit);
-    }
-    
-    return originalFetch(input, init);
-  };
+  setAuthTokenGetter(() => localStorage.getItem("samaj_token"));
 }
