@@ -28,7 +28,7 @@ export function Layout({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex flex-col relative">
       {/* Top Decoration */}
       <div className="h-2 w-full saffron-gradient absolute top-0 left-0 z-50"></div>
-      
+
       <header className="sticky top-0 z-40 w-full glass-panel border-b-0 rounded-none shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
@@ -36,7 +36,10 @@ export function Layout({ children }: { children: ReactNode }) {
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-primary border border-orange-200">
                 <Users className="w-6 h-6" />
               </div>
-              <Link href="/" className="font-display font-bold text-2xl text-secondary hover:text-primary transition-colors">
+              <Link
+                href="/"
+                className="font-display font-bold text-2xl text-secondary hover:text-primary transition-colors"
+              >
                 સમાજ ડિરેક્ટ્રી
               </Link>
             </div>
@@ -52,9 +55,9 @@ export function Layout({ children }: { children: ReactNode }) {
                     href={link.href}
                     className={cn(
                       "flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-300",
-                      isActive 
-                        ? "bg-primary text-white shadow-md shadow-primary/20" 
-                        : "text-foreground hover:bg-orange-100/50 hover:text-primary"
+                      isActive
+                        ? "bg-primary text-white shadow-md shadow-primary/20"
+                        : "text-foreground hover:bg-orange-100/50 hover:text-primary",
                     )}
                   >
                     <Icon className="w-4 h-4" />
@@ -84,7 +87,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </nav>
 
             {/* Mobile Menu Toggle */}
-            <button 
+            <button
               className="md:hidden p-2 text-secondary hover:bg-orange-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
@@ -113,9 +116,9 @@ export function Layout({ children }: { children: ReactNode }) {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 rounded-xl font-medium",
-                        isActive 
-                          ? "bg-primary text-white" 
-                          : "text-foreground hover:bg-orange-50"
+                        isActive
+                          ? "bg-primary text-white"
+                          : "text-foreground hover:bg-orange-50",
                       )}
                     >
                       <Icon className="w-5 h-5" />
@@ -125,7 +128,10 @@ export function Layout({ children }: { children: ReactNode }) {
                 })}
                 {user ? (
                   <button
-                    onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-red-600 hover:bg-red-50"
                   >
                     <LogOut className="w-5 h-5" />
@@ -151,7 +157,10 @@ export function Layout({ children }: { children: ReactNode }) {
       </main>
 
       <footer className="mt-auto py-8 text-center text-muted-foreground font-medium border-t border-border/50 bg-white/50 backdrop-blur">
-        <p>શ્રી સમાજ પરિવાર ડિરેક્ટ્રી © {new Date().getFullYear()}</p>
+        <p>
+          શ્રી દશગામ ત્રિવેદી મેવાડા બ્રાહ્મણ સમાજ પરિવાર ડિરેક્ટ્રી ©{" "}
+          {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   );
