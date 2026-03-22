@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Samaj Family Directory"
+version = "1.0.0"
+id = "artifacts/samaj-directory"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26200
+
+[services.development]
+run = "pnpm --filter @workspace/samaj-directory run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/samaj-directory", "run", "build" ]
+publicDir = "artifacts/samaj-directory/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26200"
+BASE_PATH = "/"

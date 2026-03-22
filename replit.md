@@ -1,8 +1,8 @@
-# Workspace
+# Samaj Family Directory System
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+A full-stack web application for managing a Samaj (community) family directory with full Gujarati UI, role-based authentication, and community leadership management.
 
 ## Stack
 
@@ -10,87 +10,81 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Node.js version**: 24
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
+- **Frontend**: React + Vite (Wouter routing, TanStack Query, Framer Motion)
 - **API framework**: Express 5
 - **Database**: PostgreSQL + Drizzle ORM
+- **Auth**: JWT (jsonwebtoken) + bcrypt (bcryptjs)
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **UI Language**: Gujarati (Noto Sans Gujarati font)
 
 ## Structure
 
 ```text
 artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
-│   ├── api-spec/           # OpenAPI spec + Orval codegen config
-│   ├── api-client-react/   # Generated React Query hooks
-│   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+├── artifacts/
+│   ├── api-server/          # Express API server (auth, samaj, homes, leaders)
+│   └── samaj-directory/     # React frontend (all Gujarati UI)
+├── lib/
+│   ├── api-spec/            # OpenAPI spec + Orval codegen config
+│   ├── api-client-react/    # Generated React Query hooks
+│   ├── api-zod/             # Generated Zod schemas from OpenAPI
+│   └── db/                  # Drizzle ORM schema + DB connection
+│       └── src/schema/
+│           ├── users.ts     # Users table (home_admin, super_admin roles)
+│           ├── samaj.ts     # Samaj info + Leaders tables
+│           └── homes.ts     # Homes + Members tables
+├── scripts/                 # Utility scripts
+│   └── src/seed-users.ts    # Seeds homeadmin and superadmin users
 ```
 
-## TypeScript & Composite Projects
+## User Roles & Credentials
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+| Role | Username | Password | Access |
+|------|----------|----------|--------|
+| Home Admin | `homeadmin` | `home123` | Add homes, add members |
+| Super Admin | `superadmin` | `super123` | Edit samaj info, manage leaders |
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+## Pages
 
-## Root Scripts
+- `/` — Home: Samaj name, Kuldev/Kuldevi images, leaders list
+- `/directory` — All homes sorted by village → faliya, with member tables
+- `/login` — Gujarati login form, role-based redirect
+- `/home` — Protected (home_admin): Add home + multiple members dynamically
+- `/admin` — Protected (super_admin): Edit samaj name, CRUD leaders, reorder
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+## Database Tables
 
-## Packages
+- `users` — username, password (bcrypt), role
+- `samaj` — samaj_name
+- `leaders` — name, role, mobile, address, order
+- `homes` — kutumb_vada_name, kutumb_vada_address, house_no, faliya, village
+- `members` — home_id (FK), sr_no, name, dob, occupation, relation, marital_status, mobile
 
-### `artifacts/api-server` (`@workspace/api-server`)
+## API Routes
 
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
+All under `/api`:
+- `POST /auth/login` — JWT login
+- `GET /auth/me` — Current user
+- `GET/PUT /samaj` — Samaj info
+- `GET/POST /samaj/leaders` — Leaders
+- `PUT/DELETE /samaj/leaders/:id` — Edit/delete leader
+- `POST /samaj/leaders/:id/move` — Reorder leader (up/down)
+- `GET/POST /homes` — Directory listing / create home
+- `POST /homes/:id/members` — Add member to home
 
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+## Running
 
-### `lib/db` (`@workspace/db`)
+```bash
+pnpm install
+pnpm --filter @workspace/db run push
+pnpm --filter @workspace/scripts run seed-users
+# Start workflows
+```
 
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
+## Seeding
 
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
-
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
-
-### `lib/api-spec` (`@workspace/api-spec`)
-
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+```bash
+pnpm --filter @workspace/scripts run seed-users
+```

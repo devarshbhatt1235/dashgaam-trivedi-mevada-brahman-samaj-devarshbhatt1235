@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "For beautiful page transitions and staggering list animations"
+  "react-hook-form": "For complex dynamic forms (like adding multiple members)"
+  "@hookform/resolvers": "Zod validation for react-hook-form"
+  "zod": "Schema definition and form validation"
+  "lucide-react": "For beautiful consistent icons"
+
+images:
+  - path: "artifacts/samaj-directory/public/images/kuldev.png"
+    description: "Beautiful traditional Indian Hindu male deity (Kuldev) illustration, warm saffron, gold, and vibrant orange colors, respectful and divine aura, soft lighting, highly detailed"
+    aspect_ratio: "1:1"
+  - path: "artifacts/samaj-directory/public/images/kuldevi.png"
+    description: "Beautiful traditional Indian Hindu female deity (Kuldevi) goddess illustration, warm red, gold, and vibrant saffron colors, respectful and divine aura, soft lighting, highly detailed"
+    aspect_ratio: "1:1"
+  - path: "artifacts/samaj-directory/public/images/mandala-bg.png"
+    description: "Subtle traditional Indian mandala background pattern in light cream and warm off-white, low opacity, elegant geometric floral design"
+    aspect_ratio: "16:9"
+
+notes:
+  - Global fetch is patched in App.tsx to automatically append the JWT token from localStorage to all /api requests, ensuring the generated customFetch works seamlessly with authentication.
+  - The API hooks are imported from @workspace/api-client-react as requested.

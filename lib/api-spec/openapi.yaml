@@ -1,22 +1,29 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Samaj Family Directory API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: samaj
+    description: Samaj info operations
+  - name: homes
+    description: Home/Kutumb operations
+  - name: leaders
+    description: Leader management operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,7 +31,333 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /samaj:
+    get:
+      operationId: getSamaj
+      tags: [samaj]
+      summary: Get samaj info
+      responses:
+        "200":
+          description: Samaj information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Samaj"
+    put:
+      operationId: updateSamaj
+      tags: [samaj]
+      summary: Update samaj info (super admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSamajRequest"
+      responses:
+        "200":
+          description: Updated samaj
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Samaj"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /samaj/leaders:
+    get:
+      operationId: getLeaders
+      tags: [leaders]
+      summary: Get all leaders sorted by order
+      responses:
+        "200":
+          description: List of leaders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Leader"
+    post:
+      operationId: createLeader
+      tags: [leaders]
+      summary: Create a new leader (super admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLeaderRequest"
+      responses:
+        "201":
+          description: Created leader
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Leader"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /samaj/leaders/{id}:
+    put:
+      operationId: updateLeader
+      tags: [leaders]
+      summary: Update a leader (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLeaderRequest"
+      responses:
+        "200":
+          description: Updated leader
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Leader"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteLeader
+      tags: [leaders]
+      summary: Delete a leader (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /samaj/leaders/{id}/move:
+    post:
+      operationId: moveLeader
+      tags: [leaders]
+      summary: Move leader up or down (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveLeaderRequest"
+      responses:
+        "200":
+          description: Moved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /homes:
+    get:
+      operationId: getHomes
+      tags: [homes]
+      summary: Get all homes sorted by village then faliya
+      responses:
+        "200":
+          description: List of homes with members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Home"
+    post:
+      operationId: createHome
+      tags: [homes]
+      summary: Create a new home with members (home admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateHomeRequest"
+      responses:
+        "201":
+          description: Created home
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Home"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /homes/{id}:
+    get:
+      operationId: getHome
+      tags: [homes]
+      summary: Get a specific home
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Home details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Home"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /homes/{id}/members:
+    post:
+      operationId: addMember
+      tags: [homes]
+      summary: Add a member to an existing home (home admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMemberRequest"
+      responses:
+        "201":
+          description: Added member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +367,251 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/UserInfo"
+      required:
+        - token
+        - user
+
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum: [home_admin, super_admin]
+      required:
+        - id
+        - username
+        - role
+
+    Samaj:
+      type: object
+      properties:
+        id:
+          type: integer
+        samaj_name:
+          type: string
+      required:
+        - id
+        - samaj_name
+
+    UpdateSamajRequest:
+      type: object
+      properties:
+        samaj_name:
+          type: string
+      required:
+        - samaj_name
+
+    Leader:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        role:
+          type: string
+        mobile:
+          type: string
+        address:
+          type: string
+        order:
+          type: integer
+      required:
+        - id
+        - name
+        - role
+        - order
+
+    CreateLeaderRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        mobile:
+          type: string
+        address:
+          type: string
+        order:
+          type: integer
+      required:
+        - name
+        - role
+        - order
+
+    UpdateLeaderRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        mobile:
+          type: string
+        address:
+          type: string
+        order:
+          type: integer
+
+    MoveLeaderRequest:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum: [up, down]
+      required:
+        - direction
+
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+        sr_no:
+          type: integer
+        name:
+          type: string
+        dob:
+          type: string
+        occupation:
+          type: string
+        relation:
+          type: string
+        marital_status:
+          type: string
+          enum: [married, unmarried]
+        mobile:
+          type: string
+        home_id:
+          type: integer
+      required:
+        - id
+        - sr_no
+        - name
+        - relation
+        - marital_status
+        - home_id
+
+    CreateMemberRequest:
+      type: object
+      properties:
+        sr_no:
+          type: integer
+        name:
+          type: string
+        dob:
+          type: string
+        occupation:
+          type: string
+        relation:
+          type: string
+        marital_status:
+          type: string
+          enum: [married, unmarried]
+        mobile:
+          type: string
+      required:
+        - sr_no
+        - name
+        - relation
+        - marital_status
+
+    Address:
+      type: object
+      properties:
+        house_no:
+          type: string
+        faliya:
+          type: string
+        village:
+          type: string
+      required:
+        - house_no
+        - faliya
+        - village
+
+    Home:
+      type: object
+      properties:
+        id:
+          type: integer
+        kutumb_vada_name:
+          type: string
+        kutumb_vada_address:
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/Member"
+      required:
+        - id
+        - kutumb_vada_name
+        - kutumb_vada_address
+        - address
+
+    CreateHomeRequest:
+      type: object
+      properties:
+        kutumb_vada_name:
+          type: string
+        kutumb_vada_address:
+          type: string
+        house_no:
+          type: string
+        faliya:
+          type: string
+        village:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateMemberRequest"
+      required:
+        - kutumb_vada_name
+        - kutumb_vada_address
+        - house_no
+        - faliya
+        - village
