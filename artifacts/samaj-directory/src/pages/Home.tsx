@@ -19,7 +19,7 @@ export default function Home() {
     <div className="space-y-12">
       {/* Hero Section */}
       <section className="text-center space-y-6">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-secondary drop-shadow-sm"
@@ -34,27 +34,27 @@ export default function Home() {
         <Card className="flex flex-col items-center p-8 border-t-4 border-t-primary text-center">
           <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-8 border-orange-100 shadow-2xl mb-6 relative group">
             <div className="absolute inset-0 bg-primary/20 group-hover:opacity-0 transition-opacity duration-500"></div>
-            <img 
-              src={`${import.meta.env.BASE_URL}images/kuldev.png`} 
-              alt="કુળદેવ" 
+            <img
+              src={`${import.meta.env.BASE_URL}images/kuldev.png`}
+              alt="કુળદેવ"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           </div>
-          <h2 className="text-3xl font-bold text-secondary mb-2">શ્રી કુળદેવ</h2>
-          <p className="text-muted-foreground text-lg">અમારા આરાધ્ય દેવ</p>
+          <h2 className="text-3xl font-bold text-secondary mb-2">કુળદેવ</h2>
+          <p className="text-muted-foreground text-lg">શ્રી એકલિંગજી દાદા</p>
         </Card>
 
         <Card className="flex flex-col items-center p-8 border-t-4 border-t-red-500 text-center">
           <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-8 border-red-100 shadow-2xl mb-6 relative group">
             <div className="absolute inset-0 bg-red-500/20 group-hover:opacity-0 transition-opacity duration-500"></div>
-            <img 
-              src={`${import.meta.env.BASE_URL}images/kuldevi.png`} 
-              alt="કુળદેવી" 
+            <img
+              src={`${import.meta.env.BASE_URL}images/kuldevi.png`}
+              alt="કુળદેવી"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           </div>
-          <h2 className="text-3xl font-bold text-red-700 mb-2">શ્રી કુળદેવી</h2>
-          <p className="text-muted-foreground text-lg">અમારી આરાધ્ય દેવી</p>
+          <h2 className="text-3xl font-bold text-red-700 mb-2">કુળદેવી</h2>
+          <p className="text-muted-foreground text-lg">શ્રી કાત્યાની માતા</p>
         </Card>
       </section>
 
@@ -66,7 +66,7 @@ export default function Home() {
             <div className="absolute -bottom-3 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
           </h2>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {leaders?.map((leader, index) => (
             <motion.div
@@ -81,9 +81,13 @@ export default function Home() {
                     <Award className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-foreground">{leader.name}</h3>
-                    <p className="text-primary font-semibold mb-3">{leader.role}</p>
-                    
+                    <h3 className="text-xl font-bold text-foreground">
+                      {leader.name}
+                    </h3>
+                    <p className="text-primary font-semibold mb-3">
+                      {leader.role}
+                    </p>
+
                     <div className="space-y-2 text-sm text-muted-foreground">
                       {leader.mobile && (
                         <div className="flex items-center gap-2">
