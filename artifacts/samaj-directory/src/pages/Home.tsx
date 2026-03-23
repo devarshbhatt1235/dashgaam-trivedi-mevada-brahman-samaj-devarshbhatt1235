@@ -40,7 +40,7 @@ export default function Home() {
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           </div>
-          <h2 className="text-3xl font-bold text-secondary mb-2">કુળદેવ</h2>
+          <h2 className="text-3xl font-bold text-secondary mb-2">ઇષ્ટદેવ</h2>
           <p className="text-muted-foreground text-lg">શ્રી એકલિંગજી દાદા</p>
         </Card>
 

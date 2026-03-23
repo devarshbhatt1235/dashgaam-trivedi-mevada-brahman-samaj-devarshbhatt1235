@@ -82,32 +82,57 @@ export default function HomeAdmin() {
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Card className="border-t-4 border-t-primary">
-          <h2 className="text-xl font-bold text-foreground mb-6 pb-2 border-b">કુટુંબની પ્રાથમિક માહિતી</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label>કુટુંબ વડા નામ</Label>
-              <Input {...form.register("kutumb_vada_name")} placeholder="પૂરું નામ દાખલ કરો" />
-              {form.formState.errors.kutumb_vada_name && (
-                <p className="text-sm text-red-500">{form.formState.errors.kutumb_vada_name.message}</p>
-              )}
+        <Card className="border-t-4 border-t-primary space-y-6">
+          <h2 className="text-xl font-bold text-foreground pb-2 border-b">કુટુંબની પ્રાથમિક માહિતી</h2>
+
+          {/* Kutumb Vada Details */}
+          <div>
+            <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4">કુટુંબ વડા વિગત</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>કુટુંબ વડા નામ</Label>
+                <Input {...form.register("kutumb_vada_name")} placeholder="પૂરું નામ દાખલ કરો" />
+                {form.formState.errors.kutumb_vada_name && (
+                  <p className="text-sm text-red-500">{form.formState.errors.kutumb_vada_name.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>કુટુંબ વડા સરનામું</Label>
+                <Input {...form.register("kutumb_vada_address")} placeholder="કુટુંબ વડાનું પૂરું સરનામું" />
+                {form.formState.errors.kutumb_vada_address && (
+                  <p className="text-sm text-red-500">{form.formState.errors.kutumb_vada_address.message}</p>
+                )}
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>કુટુંબ વડા સરનામું</Label>
-              <Input {...form.register("kutumb_vada_address")} placeholder="પૂરું સરનામું" />
-            </div>
-            <div className="space-y-2">
-              <Label>ઘર નંબર</Label>
-              <Input {...form.register("house_no")} placeholder="દા.ત. 101" />
-            </div>
-            <div className="space-y-2">
-              <Label>ફળિયા</Label>
-              <Input {...form.register("faliya")} placeholder="ફળિયાનું નામ" />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label>ગામ</Label>
-              <Input {...form.register("village")} placeholder="ગામનું નામ" />
+          </div>
+
+          <div className="border-t border-dashed border-orange-200" />
+
+          {/* Home Address */}
+          <div>
+            <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4">ઘરનું સરનામું</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>ઘર નંબર</Label>
+                <Input {...form.register("house_no")} placeholder="દા.ત. 101" />
+                {form.formState.errors.house_no && (
+                  <p className="text-sm text-red-500">{form.formState.errors.house_no.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>ફળિયા</Label>
+                <Input {...form.register("faliya")} placeholder="ફળિયાનું નામ" />
+                {form.formState.errors.faliya && (
+                  <p className="text-sm text-red-500">{form.formState.errors.faliya.message}</p>
+                )}
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>ગામ</Label>
+                <Input {...form.register("village")} placeholder="ગામનું નામ" />
+                {form.formState.errors.village && (
+                  <p className="text-sm text-red-500">{form.formState.errors.village.message}</p>
+                )}
+              </div>
             </div>
           </div>
         </Card>
