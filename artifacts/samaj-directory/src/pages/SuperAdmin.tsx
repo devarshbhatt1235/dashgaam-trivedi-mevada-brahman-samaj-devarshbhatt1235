@@ -187,6 +187,9 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
     }
   };
 
+  const sortedMembers = home.members?.slice().sort((a, b) => a.sr_no - b.sr_no) || [];
+  const firstMember = sortedMembers[0];
+
   return (
     <>
       {editingHome && (
@@ -206,11 +209,14 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
       )}
 
       <div className="border border-border rounded-xl overflow-hidden">
+        {/* Card Header */}
         <div className="flex items-center justify-between p-4 bg-orange-50 cursor-pointer" onClick={() => setExpanded(!expanded)}>
           <div className="flex items-center gap-3">
             <button className="text-primary"><Home className="w-5 h-5" /></button>
             <div>
-              <p className="font-bold text-secondary">{home.kutumb_vada_name}</p>
+              <p className="font-bold text-secondary">
+                {firstMember ? firstMember.name : home.kutumb_vada_name}
+              </p>
               <p className="text-xs text-muted-foreground">
                 ઘર {home.address.house_no} • {home.address.faliya} • {home.address.village}
               </p>
@@ -233,15 +239,9 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
         </div>
 
         {expanded && (
-          <div className="p-4 space-y-3">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm bg-gray-50 rounded-lg p-3">
-              <div><span className="text-muted-foreground">કુટુંબ વડા સરનામું: </span><span className="font-medium">{home.kutumb_vada_address}</span></div>
-              <div><span className="text-muted-foreground">ઘર નં: </span><span className="font-medium">{home.address.house_no}</span></div>
-              <div><span className="text-muted-foreground">ફળિયા: </span><span className="font-medium">{home.address.faliya}</span></div>
-              <div><span className="text-muted-foreground">ગામ: </span><span className="font-medium">{home.address.village}</span></div>
-            </div>
-
-            {home.members && home.members.length > 0 ? (
+          <div className="p-4 space-y-4">
+            {/* Members Table */}
+            {sortedMembers.length > 0 ? (
               <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="w-full text-sm text-left">
                   <thead className="bg-orange-50 text-secondary text-xs">
@@ -257,7 +257,7 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {home.members.map(member => (
+                    {sortedMembers.map(member => (
                       <tr key={member.id} className="hover:bg-orange-50/30">
                         <td className="px-3 py-2 font-mono">{member.sr_no}</td>
                         <td className="px-3 py-2 font-semibold">{member.name}</td>
@@ -288,6 +288,18 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
             ) : (
               <p className="text-center text-muted-foreground py-4 text-sm">આ ઘરમાં કોઈ સભ્ય નથી</p>
             )}
+
+            {/* Kutumb Vada Details below members */}
+            <div className="rounded-lg border border-orange-200 bg-orange-50/40 p-3">
+              <p className="text-xs font-bold text-secondary mb-2">કુટુંબ વડા વિગત</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                <div><span className="text-muted-foreground">કુટુંબ વડા નામ: </span><span className="font-medium">{home.kutumb_vada_name}</span></div>
+                <div><span className="text-muted-foreground">સરનામું: </span><span className="font-medium">{home.kutumb_vada_address}</span></div>
+                <div><span className="text-muted-foreground">ઘર નં: </span><span className="font-medium">{home.address.house_no}</span></div>
+                <div><span className="text-muted-foreground">ફળિયા: </span><span className="font-medium">{home.address.faliya}</span></div>
+                <div><span className="text-muted-foreground">ગામ: </span><span className="font-medium">{home.address.village}</span></div>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -349,11 +361,17 @@ export default function SuperAdmin() {
   if (authLoading) return null;
   if (!user || user.role !== "super_admin") return <Redirect href="/login" />;
 
-  const filteredHomes = homes?.filter(h =>
-    h.kutumb_vada_name.toLowerCase().includes(homeSearch.toLowerCase()) ||
-    h.address.village.toLowerCase().includes(homeSearch.toLowerCase()) ||
-    h.address.faliya.toLowerCase().includes(homeSearch.toLowerCase())
-  ) || [];
+  const filteredHomes = homes?.filter(h => {
+    const term = homeSearch.toLowerCase();
+    const firstMember = h.members?.slice().sort((a, b) => a.sr_no - b.sr_no)[0];
+    return (
+      h.kutumb_vada_name.toLowerCase().includes(term) ||
+      h.address.village.toLowerCase().includes(term) ||
+      h.address.faliya.toLowerCase().includes(term) ||
+      (firstMember?.name || "").toLowerCase().includes(term) ||
+      h.members?.some(m => m.name.toLowerCase().includes(term))
+    );
+  }) || [];
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -463,7 +481,7 @@ export default function SuperAdmin() {
         </div>
 
         <Input
-          placeholder="ઘર, ફળિયા અથવા ગામ શોધો..."
+          placeholder="નામ, કુટુંબ વડા, ફળિયા, ગામ..."
           value={homeSearch}
           onChange={e => setHomeSearch(e.target.value)}
           className="mb-4 max-w-sm"
