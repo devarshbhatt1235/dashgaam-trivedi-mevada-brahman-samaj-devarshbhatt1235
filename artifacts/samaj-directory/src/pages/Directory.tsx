@@ -157,18 +157,6 @@ export default function Directory() {
                                 <span className="text-muted-foreground">કુટુંબ વડા સરનામું: </span>
                                 <span className="font-medium">{home.kutumb_vada_address}</span>
                               </div>
-                              <div>
-                                <span className="text-muted-foreground">ઘર નં: </span>
-                                <span className="font-medium">{home.address.house_no}</span>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">ફળિયા: </span>
-                                <span className="font-medium">{home.address.faliya}</span>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">ગામ: </span>
-                                <span className="font-medium">{home.address.village}</span>
-                              </div>
                             </div>
                           </div>
                         </div>

@@ -292,12 +292,9 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
             {/* Kutumb Vada Details below members */}
             <div className="rounded-lg border border-orange-200 bg-orange-50/40 p-3">
               <p className="text-xs font-bold text-secondary mb-2">કુટુંબ વડા વિગત</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                 <div><span className="text-muted-foreground">કુટુંબ વડા નામ: </span><span className="font-medium">{home.kutumb_vada_name}</span></div>
-                <div><span className="text-muted-foreground">સરનામું: </span><span className="font-medium">{home.kutumb_vada_address}</span></div>
-                <div><span className="text-muted-foreground">ઘર નં: </span><span className="font-medium">{home.address.house_no}</span></div>
-                <div><span className="text-muted-foreground">ફળિયા: </span><span className="font-medium">{home.address.faliya}</span></div>
-                <div><span className="text-muted-foreground">ગામ: </span><span className="font-medium">{home.address.village}</span></div>
+                <div><span className="text-muted-foreground">કુટુંબ વડા સરનામું: </span><span className="font-medium">{home.kutumb_vada_address}</span></div>
               </div>
             </div>
           </div>
