@@ -5,6 +5,23 @@ import { Search, MapPin, HomeIcon, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+const maritalLabels: Record<string, { label: string; className: string }> = {
+  married:       { label: "વિવાહિત",    className: "bg-green-100 text-green-700" },
+  unmarried:     { label: "અવિવાહિત",   className: "bg-blue-100 text-blue-700" },
+  vidhur:        { label: "વિધુર",      className: "bg-purple-100 text-purple-700" },
+  vidhva:        { label: "વિધવા",      className: "bg-pink-100 text-pink-700" },
+  chhutachheda:  { label: "છૂટાછેડા",   className: "bg-orange-100 text-orange-700" },
+};
+
+function MaritalBadge({ status }: { status: string }) {
+  const info = maritalLabels[status] ?? { label: status, className: "bg-gray-100 text-gray-700" };
+  return (
+    <span className={cn("px-2.5 py-1 rounded-full text-xs font-semibold", info.className)}>
+      {info.label}
+    </span>
+  );
+}
+
 export default function Directory() {
   const { data: homes, isLoading } = useGetHomes();
   const [searchTerm, setSearchTerm] = useState("");
@@ -121,14 +138,7 @@ export default function Directory() {
                                       <td className="px-4 py-3">{member.dob || "-"}</td>
                                       <td className="px-4 py-3">{member.occupation || "-"}</td>
                                       <td className="px-4 py-3">
-                                        <span className={cn(
-                                          "px-2.5 py-1 rounded-full text-xs font-semibold",
-                                          member.marital_status === "married"
-                                            ? "bg-green-100 text-green-700"
-                                            : "bg-blue-100 text-blue-700"
-                                        )}>
-                                          {member.marital_status === "married" ? "વિવાહિત" : "અવિવાહિત"}
-                                        </span>
+                                        <MaritalBadge status={member.marital_status} />
                                       </td>
                                       <td className="px-4 py-3">{member.mobile || "-"}</td>
                                     </tr>

@@ -14,7 +14,7 @@ const memberSchema = z.object({
   dob: z.string().optional(),
   occupation: z.string().optional(),
   relation: z.string().min(1, "સંબંધ જરૂરી છે"),
-  marital_status: z.enum(["married", "unmarried"]),
+  marital_status: z.enum(["married", "unmarried", "vidhur", "vidhva", "chhutachheda"]),
   mobile: z.string().optional(),
 });
 
@@ -195,6 +195,9 @@ export default function HomeAdmin() {
                     <Select {...form.register(`members.${index}.marital_status`)}>
                       <option value="married">વિવાહિત</option>
                       <option value="unmarried">અવિવાહિત</option>
+                      <option value="vidhur">વિધુર</option>
+                      <option value="vidhva">વિધવા</option>
+                      <option value="chhutachheda">છૂટાછેડા</option>
                     </Select>
                   </div>
                   <div className="space-y-2 lg:col-span-3">

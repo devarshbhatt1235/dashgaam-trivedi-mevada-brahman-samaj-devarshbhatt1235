@@ -22,6 +22,23 @@ import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 
+const maritalLabels: Record<string, { label: string; className: string }> = {
+  married:       { label: "વિવાહિત",    className: "bg-green-100 text-green-700" },
+  unmarried:     { label: "અવિવાહિત",   className: "bg-blue-100 text-blue-700" },
+  vidhur:        { label: "વિધુર",      className: "bg-purple-100 text-purple-700" },
+  vidhva:        { label: "વિધવા",      className: "bg-pink-100 text-pink-700" },
+  chhutachheda:  { label: "છૂટાછેડા",   className: "bg-orange-100 text-orange-700" },
+};
+
+function MaritalBadge({ status }: { status: string }) {
+  const info = maritalLabels[status] ?? { label: status, className: "bg-gray-100 text-gray-700" };
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${info.className}`}>
+      {info.label}
+    </span>
+  );
+}
+
 type Leader = {
   id: number; name: string; role: string;
   mobile?: string; address?: string; order: number;
@@ -120,8 +137,11 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
               onChange={e => setForm({ ...form, marital_status: e.target.value })}
               className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
             >
-              <option value="unmarried">અવિવાહિત</option>
               <option value="married">વિવાહિત</option>
+              <option value="unmarried">અવિવાહિત</option>
+              <option value="vidhur">વિધુર</option>
+              <option value="vidhva">વિધવા</option>
+              <option value="chhutachheda">છૂટાછેડા</option>
             </select>
           </div>
           <div>
@@ -265,9 +285,7 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                         <td className="px-3 py-2">{member.dob || "—"}</td>
                         <td className="px-3 py-2">{member.occupation || "—"}</td>
                         <td className="px-3 py-2">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${member.marital_status === "married" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-                            {member.marital_status === "married" ? "વિવાહિત" : "અવિવાહિત"}
-                          </span>
+                          <MaritalBadge status={member.marital_status} />
                         </td>
                         <td className="px-3 py-2">{member.mobile || "—"}</td>
                         <td className="px-3 py-2">
