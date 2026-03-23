@@ -317,6 +317,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateHome
+      tags: [homes]
+      summary: Update home details (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHomeRequest"
+      responses:
+        "200":
+          description: Updated home
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Home"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteHome
+      tags: [homes]
+      summary: Delete an entire home and all its members (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /homes/{id}/members:
     post:
@@ -344,6 +406,80 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Member"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /homes/{id}/members/{memberId}:
+    put:
+      operationId: updateMember
+      tags: [homes]
+      summary: Update a member's details (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMemberRequest"
+      responses:
+        "200":
+          description: Updated member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteMember
+      tags: [homes]
+      summary: Delete a single member from a home (super admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
         "403":
           description: Forbidden
           content:
@@ -615,3 +751,36 @@ components:
         - house_no
         - faliya
         - village
+
+    UpdateHomeRequest:
+      type: object
+      properties:
+        kutumb_vada_name:
+          type: string
+        kutumb_vada_address:
+          type: string
+        house_no:
+          type: string
+        faliya:
+          type: string
+        village:
+          type: string
+
+    UpdateMemberRequest:
+      type: object
+      properties:
+        sr_no:
+          type: integer
+        name:
+          type: string
+        dob:
+          type: string
+        occupation:
+          type: string
+        relation:
+          type: string
+        marital_status:
+          type: string
+          enum: [married, unmarried]
+        mobile:
+          type: string

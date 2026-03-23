@@ -147,3 +147,29 @@ export interface CreateHomeRequest {
   village: string;
   members?: CreateMemberRequest[];
 }
+
+export interface UpdateHomeRequest {
+  kutumb_vada_name?: string;
+  kutumb_vada_address?: string;
+  house_no?: string;
+  faliya?: string;
+  village?: string;
+}
+
+export type UpdateMemberRequestMaritalStatus =
+  (typeof UpdateMemberRequestMaritalStatus)[keyof typeof UpdateMemberRequestMaritalStatus];
+
+export const UpdateMemberRequestMaritalStatus = {
+  married: "married",
+  unmarried: "unmarried",
+} as const;
+
+export interface UpdateMemberRequest {
+  sr_no?: number;
+  name?: string;
+  dob?: string;
+  occupation?: string;
+  relation?: string;
+  marital_status?: UpdateMemberRequestMaritalStatus;
+  mobile?: string;
+}

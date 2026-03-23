@@ -30,7 +30,9 @@ import type {
   MoveLeaderRequest,
   Samaj,
   SuccessResponse,
+  UpdateHomeRequest,
   UpdateLeaderRequest,
+  UpdateMemberRequest,
   UpdateSamajRequest,
   UserInfo,
 } from "./api.schemas";
@@ -1065,6 +1067,177 @@ export function useGetHome<
 }
 
 /**
+ * @summary Update home details (super admin only)
+ */
+export const getUpdateHomeUrl = (id: number) => {
+  return `/api/homes/${id}`;
+};
+
+export const updateHome = async (
+  id: number,
+  updateHomeRequest: UpdateHomeRequest,
+  options?: RequestInit,
+): Promise<Home> => {
+  return customFetch<Home>(getUpdateHomeUrl(id), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateHomeRequest),
+  });
+};
+
+export const getUpdateHomeMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateHome>>,
+    TError,
+    { id: number; data: BodyType<UpdateHomeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateHome>>,
+  TError,
+  { id: number; data: BodyType<UpdateHomeRequest> },
+  TContext
+> => {
+  const mutationKey = ["updateHome"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateHome>>,
+    { id: number; data: BodyType<UpdateHomeRequest> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateHome(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateHomeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateHome>>
+>;
+export type UpdateHomeMutationBody = BodyType<UpdateHomeRequest>;
+export type UpdateHomeMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Update home details (super admin only)
+ */
+export const useUpdateHome = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateHome>>,
+    TError,
+    { id: number; data: BodyType<UpdateHomeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateHome>>,
+  TError,
+  { id: number; data: BodyType<UpdateHomeRequest> },
+  TContext
+> => {
+  return useMutation(getUpdateHomeMutationOptions(options));
+};
+
+/**
+ * @summary Delete an entire home and all its members (super admin only)
+ */
+export const getDeleteHomeUrl = (id: number) => {
+  return `/api/homes/${id}`;
+};
+
+export const deleteHome = async (
+  id: number,
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(getDeleteHomeUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteHomeMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteHome>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteHome>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteHome"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteHome>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteHome(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteHomeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteHome>>
+>;
+
+export type DeleteHomeMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Delete an entire home and all its members (super admin only)
+ */
+export const useDeleteHome = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteHome>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteHome>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteHomeMutationOptions(options));
+};
+
+/**
  * @summary Add a member to an existing home (home admin only)
  */
 export const getAddMemberUrl = (id: number) => {
@@ -1149,4 +1322,177 @@ export const useAddMember = <
   TContext
 > => {
   return useMutation(getAddMemberMutationOptions(options));
+};
+
+/**
+ * @summary Update a member's details (super admin only)
+ */
+export const getUpdateMemberUrl = (id: number, memberId: number) => {
+  return `/api/homes/${id}/members/${memberId}`;
+};
+
+export const updateMember = async (
+  id: number,
+  memberId: number,
+  updateMemberRequest: UpdateMemberRequest,
+  options?: RequestInit,
+): Promise<Member> => {
+  return customFetch<Member>(getUpdateMemberUrl(id, memberId), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateMemberRequest),
+  });
+};
+
+export const getUpdateMemberMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateMember>>,
+    TError,
+    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateMember>>,
+  TError,
+  { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+  TContext
+> => {
+  const mutationKey = ["updateMember"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateMember>>,
+    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> }
+  > = (props) => {
+    const { id, memberId, data } = props ?? {};
+
+    return updateMember(id, memberId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateMemberMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateMember>>
+>;
+export type UpdateMemberMutationBody = BodyType<UpdateMemberRequest>;
+export type UpdateMemberMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Update a member's details (super admin only)
+ */
+export const useUpdateMember = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateMember>>,
+    TError,
+    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateMember>>,
+  TError,
+  { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+  TContext
+> => {
+  return useMutation(getUpdateMemberMutationOptions(options));
+};
+
+/**
+ * @summary Delete a single member from a home (super admin only)
+ */
+export const getDeleteMemberUrl = (id: number, memberId: number) => {
+  return `/api/homes/${id}/members/${memberId}`;
+};
+
+export const deleteMember = async (
+  id: number,
+  memberId: number,
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(getDeleteMemberUrl(id, memberId), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteMemberMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteMember>>,
+    TError,
+    { id: number; memberId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteMember>>,
+  TError,
+  { id: number; memberId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteMember"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteMember>>,
+    { id: number; memberId: number }
+  > = (props) => {
+    const { id, memberId } = props ?? {};
+
+    return deleteMember(id, memberId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteMemberMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteMember>>
+>;
+
+export type DeleteMemberMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Delete a single member from a home (super admin only)
+ */
+export const useDeleteMember = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteMember>>,
+    TError,
+    { id: number; memberId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteMember>>,
+  TError,
+  { id: number; memberId: number },
+  TContext
+> => {
+  return useMutation(getDeleteMemberMutationOptions(options));
 };

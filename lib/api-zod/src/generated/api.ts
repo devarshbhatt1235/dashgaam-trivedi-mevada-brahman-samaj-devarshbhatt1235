@@ -224,6 +224,59 @@ export const GetHomeResponse = zod.object({
 });
 
 /**
+ * @summary Update home details (super admin only)
+ */
+export const UpdateHomeParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateHomeBody = zod.object({
+  kutumb_vada_name: zod.string().optional(),
+  kutumb_vada_address: zod.string().optional(),
+  house_no: zod.string().optional(),
+  faliya: zod.string().optional(),
+  village: zod.string().optional(),
+});
+
+export const UpdateHomeResponse = zod.object({
+  id: zod.number(),
+  kutumb_vada_name: zod.string(),
+  kutumb_vada_address: zod.string(),
+  address: zod.object({
+    house_no: zod.string(),
+    faliya: zod.string(),
+    village: zod.string(),
+  }),
+  members: zod
+    .array(
+      zod.object({
+        id: zod.number(),
+        sr_no: zod.number(),
+        name: zod.string(),
+        dob: zod.string().optional(),
+        occupation: zod.string().optional(),
+        relation: zod.string(),
+        marital_status: zod.enum(["married", "unmarried"]),
+        mobile: zod.string().optional(),
+        home_id: zod.number(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary Delete an entire home and all its members (super admin only)
+ */
+export const DeleteHomeParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteHomeResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
  * @summary Add a member to an existing home (home admin only)
  */
 export const AddMemberParams = zod.object({
@@ -238,4 +291,47 @@ export const AddMemberBody = zod.object({
   relation: zod.string(),
   marital_status: zod.enum(["married", "unmarried"]),
   mobile: zod.string().optional(),
+});
+
+/**
+ * @summary Update a member's details (super admin only)
+ */
+export const UpdateMemberParams = zod.object({
+  id: zod.coerce.number(),
+  memberId: zod.coerce.number(),
+});
+
+export const UpdateMemberBody = zod.object({
+  sr_no: zod.number().optional(),
+  name: zod.string().optional(),
+  dob: zod.string().optional(),
+  occupation: zod.string().optional(),
+  relation: zod.string().optional(),
+  marital_status: zod.enum(["married", "unmarried"]).optional(),
+  mobile: zod.string().optional(),
+});
+
+export const UpdateMemberResponse = zod.object({
+  id: zod.number(),
+  sr_no: zod.number(),
+  name: zod.string(),
+  dob: zod.string().optional(),
+  occupation: zod.string().optional(),
+  relation: zod.string(),
+  marital_status: zod.enum(["married", "unmarried"]),
+  mobile: zod.string().optional(),
+  home_id: zod.number(),
+});
+
+/**
+ * @summary Delete a single member from a home (super admin only)
+ */
+export const DeleteMemberParams = zod.object({
+  id: zod.coerce.number(),
+  memberId: zod.coerce.number(),
+});
+
+export const DeleteMemberResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
 });

@@ -97,6 +97,59 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const existing = await db.select().from(homesTable).where(eq(homesTable.id, id)).limit(1);
+
+    if (existing.length === 0) {
+      res.status(404).json({ error: "Home not found" });
+      return;
+    }
+
+    const { kutumb_vada_name, kutumb_vada_address, house_no, faliya, village } = req.body;
+    const updates: Partial<typeof existing[0]> = {};
+
+    if (kutumb_vada_name !== undefined) updates.kutumb_vada_name = kutumb_vada_name;
+    if (kutumb_vada_address !== undefined) updates.kutumb_vada_address = kutumb_vada_address;
+    if (house_no !== undefined) updates.house_no = house_no;
+    if (faliya !== undefined) updates.faliya = faliya;
+    if (village !== undefined) updates.village = village;
+
+    const [updated] = await db.update(homesTable).set(updates).where(eq(homesTable.id, id)).returning();
+    const members = await db.select().from(membersTable).where(eq(membersTable.home_id, id));
+
+    res.json({
+      ...updated,
+      address: { house_no: updated.house_no, faliya: updated.faliya, village: updated.village },
+      members: members.sort((a, b) => a.sr_no - b.sr_no),
+    });
+  } catch (err) {
+    req.log.error({ err }, "Update home error");
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.delete("/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const existing = await db.select().from(homesTable).where(eq(homesTable.id, id)).limit(1);
+
+    if (existing.length === 0) {
+      res.status(404).json({ error: "Home not found" });
+      return;
+    }
+
+    await db.delete(membersTable).where(eq(membersTable.home_id, id));
+    await db.delete(homesTable).where(eq(homesTable.id, id));
+
+    res.json({ success: true, message: "Home and all members deleted" });
+  } catch (err) {
+    req.log.error({ err }, "Delete home error");
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 router.post("/:id/members", requireAuth, requireRole("home_admin"), async (req, res) => {
   try {
     const home_id = parseInt(req.params.id);
@@ -128,6 +181,62 @@ router.post("/:id/members", requireAuth, requireRole("home_admin"), async (req, 
     res.status(201).json(member);
   } catch (err) {
     req.log.error({ err }, "Add member error");
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.put("/:id/members/:memberId", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const memberId = parseInt(req.params.memberId);
+    const home_id = parseInt(req.params.id);
+
+    const existing = await db.select().from(membersTable)
+      .where(eq(membersTable.id, memberId)).limit(1);
+
+    if (existing.length === 0 || existing[0].home_id !== home_id) {
+      res.status(404).json({ error: "Member not found" });
+      return;
+    }
+
+    const { sr_no, name, dob, occupation, relation, marital_status, mobile } = req.body;
+    const updates: Partial<typeof existing[0]> = {};
+
+    if (sr_no !== undefined) updates.sr_no = sr_no;
+    if (name !== undefined) updates.name = name;
+    if (dob !== undefined) updates.dob = dob;
+    if (occupation !== undefined) updates.occupation = occupation;
+    if (relation !== undefined) updates.relation = relation;
+    if (marital_status !== undefined) updates.marital_status = marital_status;
+    if (mobile !== undefined) updates.mobile = mobile;
+
+    const [updated] = await db.update(membersTable).set(updates)
+      .where(eq(membersTable.id, memberId)).returning();
+
+    res.json(updated);
+  } catch (err) {
+    req.log.error({ err }, "Update member error");
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.delete("/:id/members/:memberId", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const memberId = parseInt(req.params.memberId);
+    const home_id = parseInt(req.params.id);
+
+    const existing = await db.select().from(membersTable)
+      .where(eq(membersTable.id, memberId)).limit(1);
+
+    if (existing.length === 0 || existing[0].home_id !== home_id) {
+      res.status(404).json({ error: "Member not found" });
+      return;
+    }
+
+    await db.delete(membersTable).where(eq(membersTable.id, memberId));
+
+    res.json({ success: true, message: "Member deleted" });
+  } catch (err) {
+    req.log.error({ err }, "Delete member error");
     res.status(500).json({ error: "Server error" });
   }
 });
