@@ -12,4 +12,10 @@ export interface UpdateHomeRequest {
   house_no?: string;
   faliya?: string;
   village?: string;
+  current_house_no?: string;
+  current_area?: string;
+  current_landmark?: string;
+  current_city?: string;
+  current_district?: string;
+  current_pincode?: string;
 }

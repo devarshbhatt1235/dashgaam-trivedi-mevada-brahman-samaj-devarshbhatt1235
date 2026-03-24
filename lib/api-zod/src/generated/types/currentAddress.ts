@@ -5,19 +5,12 @@
  * Samaj Family Directory API
  * OpenAPI spec version: 0.1.0
  */
-import type { CreateMemberRequest } from "./createMemberRequest";
 
-export interface CreateHomeRequest {
-  kutumb_vada_name: string;
-  kutumb_vada_address: string;
-  house_no: string;
-  faliya: string;
-  village: string;
+export interface CurrentAddress {
   current_house_no?: string;
   current_area?: string;
   current_landmark?: string;
   current_city?: string;
   current_district?: string;
   current_pincode?: string;
-  members?: CreateMemberRequest[];
 }

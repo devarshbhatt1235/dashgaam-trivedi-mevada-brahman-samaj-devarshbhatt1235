@@ -131,11 +131,21 @@ export interface Address {
   village: string;
 }
 
+export interface CurrentAddress {
+  current_house_no?: string;
+  current_area?: string;
+  current_landmark?: string;
+  current_city?: string;
+  current_district?: string;
+  current_pincode?: string;
+}
+
 export interface Home {
   id: number;
   kutumb_vada_name: string;
   kutumb_vada_address: string;
   address: Address;
+  current_address?: CurrentAddress;
   members?: Member[];
 }
 
@@ -145,6 +155,12 @@ export interface CreateHomeRequest {
   house_no: string;
   faliya: string;
   village: string;
+  current_house_no?: string;
+  current_area?: string;
+  current_landmark?: string;
+  current_city?: string;
+  current_district?: string;
+  current_pincode?: string;
   members?: CreateMemberRequest[];
 }
 
@@ -154,6 +170,12 @@ export interface UpdateHomeRequest {
   house_no?: string;
   faliya?: string;
   village?: string;
+  current_house_no?: string;
+  current_area?: string;
+  current_landmark?: string;
+  current_city?: string;
+  current_district?: string;
+  current_pincode?: string;
 }
 
 export type UpdateMemberRequestMaritalStatus =

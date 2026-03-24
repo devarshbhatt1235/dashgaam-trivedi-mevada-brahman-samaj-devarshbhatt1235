@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { Address } from "./address";
+import type { CurrentAddress } from "./currentAddress";
 import type { Member } from "./member";
 
 export interface Home {
@@ -13,5 +14,6 @@ export interface Home {
   kutumb_vada_name: string;
   kutumb_vada_address: string;
   address: Address;
+  current_address?: CurrentAddress;
   members?: Member[];
 }

@@ -9,6 +9,13 @@ export const homesTable = pgTable("homes", {
   house_no: varchar("house_no", { length: 50 }).notNull(),
   faliya: varchar("faliya", { length: 100 }).notNull(),
   village: varchar("village", { length: 100 }).notNull(),
+  // Current Address (હાલ નું સરનામું)
+  current_house_no: varchar("current_house_no", { length: 50 }),
+  current_area: varchar("current_area", { length: 150 }),
+  current_landmark: varchar("current_landmark", { length: 200 }),
+  current_city: varchar("current_city", { length: 100 }),
+  current_district: varchar("current_district", { length: 100 }),
+  current_pincode: varchar("current_pincode", { length: 10 }),
 });
 
 export const membersTable = pgTable("members", {

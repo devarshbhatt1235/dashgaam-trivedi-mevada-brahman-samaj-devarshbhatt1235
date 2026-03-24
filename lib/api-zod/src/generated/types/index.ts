@@ -11,6 +11,7 @@ export * from "./createHomeRequest";
 export * from "./createLeaderRequest";
 export * from "./createMemberRequest";
 export * from "./createMemberRequestMaritalStatus";
+export * from "./currentAddress";
 export * from "./errorResponse";
 export * from "./healthStatus";
 export * from "./home";

@@ -148,6 +148,16 @@ export const GetHomesResponseItem = zod.object({
     faliya: zod.string(),
     village: zod.string(),
   }),
+  current_address: zod
+    .object({
+      current_house_no: zod.string().optional(),
+      current_area: zod.string().optional(),
+      current_landmark: zod.string().optional(),
+      current_city: zod.string().optional(),
+      current_district: zod.string().optional(),
+      current_pincode: zod.string().optional(),
+    })
+    .optional(),
   members: zod
     .array(
       zod.object({
@@ -175,6 +185,12 @@ export const CreateHomeBody = zod.object({
   house_no: zod.string(),
   faliya: zod.string(),
   village: zod.string(),
+  current_house_no: zod.string().optional(),
+  current_area: zod.string().optional(),
+  current_landmark: zod.string().optional(),
+  current_city: zod.string().optional(),
+  current_district: zod.string().optional(),
+  current_pincode: zod.string().optional(),
   members: zod
     .array(
       zod.object({
@@ -206,6 +222,16 @@ export const GetHomeResponse = zod.object({
     faliya: zod.string(),
     village: zod.string(),
   }),
+  current_address: zod
+    .object({
+      current_house_no: zod.string().optional(),
+      current_area: zod.string().optional(),
+      current_landmark: zod.string().optional(),
+      current_city: zod.string().optional(),
+      current_district: zod.string().optional(),
+      current_pincode: zod.string().optional(),
+    })
+    .optional(),
   members: zod
     .array(
       zod.object({
@@ -236,6 +262,12 @@ export const UpdateHomeBody = zod.object({
   house_no: zod.string().optional(),
   faliya: zod.string().optional(),
   village: zod.string().optional(),
+  current_house_no: zod.string().optional(),
+  current_area: zod.string().optional(),
+  current_landmark: zod.string().optional(),
+  current_city: zod.string().optional(),
+  current_district: zod.string().optional(),
+  current_pincode: zod.string().optional(),
 });
 
 export const UpdateHomeResponse = zod.object({
@@ -247,6 +279,16 @@ export const UpdateHomeResponse = zod.object({
     faliya: zod.string(),
     village: zod.string(),
   }),
+  current_address: zod
+    .object({
+      current_house_no: zod.string().optional(),
+      current_area: zod.string().optional(),
+      current_landmark: zod.string().optional(),
+      current_city: zod.string().optional(),
+      current_district: zod.string().optional(),
+      current_pincode: zod.string().optional(),
+    })
+    .optional(),
   members: zod
     .array(
       zod.object({

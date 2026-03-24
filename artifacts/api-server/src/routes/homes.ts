@@ -6,22 +6,31 @@ import { requireAuth, requireRole } from "../middlewares/auth.js";
 
 const router: IRouter = Router();
 
+function buildHomeResponse(home: typeof homesTable.$inferSelect, members: (typeof membersTable.$inferSelect)[]) {
+  return {
+    ...home,
+    address: {
+      house_no: home.house_no,
+      faliya: home.faliya,
+      village: home.village,
+    },
+    current_address: {
+      current_house_no: home.current_house_no ?? null,
+      current_area: home.current_area ?? null,
+      current_landmark: home.current_landmark ?? null,
+      current_city: home.current_city ?? null,
+      current_district: home.current_district ?? null,
+      current_pincode: home.current_pincode ?? null,
+    },
+    members: members.filter((m) => m.home_id === home.id).sort((a, b) => a.sr_no - b.sr_no),
+  };
+}
+
 router.get("/", async (req, res) => {
   try {
     const homes = await db.select().from(homesTable).orderBy(asc(homesTable.village), asc(homesTable.faliya));
     const members = await db.select().from(membersTable);
-
-    const result = homes.map((home) => ({
-      ...home,
-      address: {
-        house_no: home.house_no,
-        faliya: home.faliya,
-        village: home.village,
-      },
-      members: members.filter((m) => m.home_id === home.id).sort((a, b) => a.sr_no - b.sr_no),
-    }));
-
-    res.json(result);
+    res.json(homes.map((h) => buildHomeResponse(h, members)));
   } catch (err) {
     req.log.error({ err }, "Get homes error");
     res.status(500).json({ error: "Server error" });
@@ -30,7 +39,10 @@ router.get("/", async (req, res) => {
 
 router.post("/", requireAuth, requireRole("home_admin"), async (req, res) => {
   try {
-    const { kutumb_vada_name, kutumb_vada_address, house_no, faliya, village, members } = req.body;
+    const {
+      kutumb_vada_name, kutumb_vada_address, house_no, faliya, village, members,
+      current_house_no, current_area, current_landmark, current_city, current_district, current_pincode,
+    } = req.body;
 
     if (!kutumb_vada_name || !kutumb_vada_address || !house_no || !faliya || !village) {
       res.status(400).json({ error: "All home fields are required" });
@@ -43,6 +55,12 @@ router.post("/", requireAuth, requireRole("home_admin"), async (req, res) => {
       house_no,
       faliya,
       village,
+      current_house_no: current_house_no || null,
+      current_area: current_area || null,
+      current_landmark: current_landmark || null,
+      current_city: current_city || null,
+      current_district: current_district || null,
+      current_pincode: current_pincode || null,
     }).returning();
 
     const insertedMembers = [];
