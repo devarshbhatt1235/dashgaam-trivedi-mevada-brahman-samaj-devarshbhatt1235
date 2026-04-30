@@ -7,10 +7,10 @@
  */
 
 export interface Leader {
-  id: number;
+  id: string;
   name: string;
   role: string;
-  mobile?: string;
-  address?: string;
+  mobile?: string | null;
+  address?: string | null;
   order: number;
 }

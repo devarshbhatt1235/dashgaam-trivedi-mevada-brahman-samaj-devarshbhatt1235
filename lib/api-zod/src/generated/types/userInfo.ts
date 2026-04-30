@@ -8,7 +8,7 @@
 import type { UserInfoRole } from "./userInfoRole";
 
 export interface UserInfo {
-  id: number;
+  id: string;
   username: string;
   role: UserInfoRole;
 }

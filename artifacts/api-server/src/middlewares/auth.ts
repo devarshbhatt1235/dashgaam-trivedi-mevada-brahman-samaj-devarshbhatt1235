@@ -4,12 +4,13 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "samaj-secret-key-2024";
 
 export interface AuthUser {
-  id: number;
+  id: string;
   username: string;
   role: string;
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: AuthUser;

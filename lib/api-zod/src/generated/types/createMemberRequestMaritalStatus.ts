@@ -12,4 +12,7 @@ export type CreateMemberRequestMaritalStatus =
 export const CreateMemberRequestMaritalStatus = {
   married: "married",
   unmarried: "unmarried",
+  vidhur: "vidhur",
+  vidhva: "vidhva",
+  chhutachheda: "chhutachheda",
 } as const;

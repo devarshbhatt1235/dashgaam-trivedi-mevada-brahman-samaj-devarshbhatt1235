@@ -7,10 +7,10 @@
  */
 
 export interface CurrentAddress {
-  current_house_no?: string;
-  current_area?: string;
-  current_landmark?: string;
-  current_city?: string;
-  current_district?: string;
-  current_pincode?: string;
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
 }

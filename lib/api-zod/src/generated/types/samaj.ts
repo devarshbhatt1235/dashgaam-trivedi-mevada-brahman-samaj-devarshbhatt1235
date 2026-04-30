@@ -7,6 +7,6 @@
  */
 
 export interface Samaj {
-  id: number;
+  id: string;
   samaj_name: string;
 }

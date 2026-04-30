@@ -8,13 +8,15 @@
 import type { MemberMaritalStatus } from "./memberMaritalStatus";
 
 export interface Member {
-  id: number;
+  id: string;
   sr_no: number;
   name: string;
-  dob?: string;
-  occupation?: string;
+  dob?: string | null;
+  occupation?: string | null;
   relation: string;
   marital_status: MemberMaritalStatus;
-  mobile?: string;
-  home_id: number;
+  mobile?: string | null;
+  education?: string | null;
+  qualification?: string | null;
+  home_id: string;
 }

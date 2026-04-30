@@ -168,7 +168,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -205,7 +205,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: Deleted successfully
@@ -232,7 +232,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -303,7 +303,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: Home details
@@ -328,7 +328,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -365,7 +365,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: Deleted successfully
@@ -392,7 +392,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -425,12 +425,12 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
         - name: memberId
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -467,12 +467,12 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
         - name: memberId
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: Deleted successfully
@@ -547,7 +547,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         username:
           type: string
         role:
@@ -562,7 +562,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         samaj_name:
           type: string
       required:
@@ -581,15 +581,17 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         name:
           type: string
         role:
           type: string
         mobile:
           type: string
+          nullable: true
         address:
           type: string
+          nullable: true
         order:
           type: integer
       required:
@@ -643,24 +645,33 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         sr_no:
           type: integer
         name:
           type: string
         dob:
           type: string
+          nullable: true
         occupation:
           type: string
+          nullable: true
         relation:
           type: string
         marital_status:
           type: string
-          enum: [married, unmarried]
+          enum: [married, unmarried, vidhur, vidhva, chhutachheda]
         mobile:
           type: string
+          nullable: true
+        education:
+          type: string
+          nullable: true
+        qualification:
+          type: string
+          nullable: true
         home_id:
-          type: integer
+          type: string
       required:
         - id
         - sr_no
@@ -684,8 +695,12 @@ components:
           type: string
         marital_status:
           type: string
-          enum: [married, unmarried]
+          enum: [married, unmarried, vidhur, vidhva, chhutachheda]
         mobile:
+          type: string
+        education:
+          type: string
+        qualification:
           type: string
       required:
         - sr_no
@@ -712,26 +727,56 @@ components:
       properties:
         current_house_no:
           type: string
+          nullable: true
         current_area:
           type: string
+          nullable: true
         current_landmark:
           type: string
+          nullable: true
         current_city:
           type: string
+          nullable: true
         current_district:
           type: string
+          nullable: true
         current_pincode:
           type: string
+          nullable: true
 
     Home:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         kutumb_vada_name:
           type: string
         kutumb_vada_address:
           type: string
+        house_no:
+          type: string
+        faliya:
+          type: string
+        village:
+          type: string
+        current_house_no:
+          type: string
+          nullable: true
+        current_area:
+          type: string
+          nullable: true
+        current_landmark:
+          type: string
+          nullable: true
+        current_city:
+          type: string
+          nullable: true
+        current_district:
+          type: string
+          nullable: true
+        current_pincode:
+          type: string
+          nullable: true
         address:
           $ref: "#/components/schemas/Address"
         current_address:
@@ -823,6 +868,10 @@ components:
           type: string
         marital_status:
           type: string
-          enum: [married, unmarried]
+          enum: [married, unmarried, vidhur, vidhva, chhutachheda]
         mobile:
+          type: string
+        education:
+          type: string
+        qualification:
           type: string

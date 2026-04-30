@@ -22,10 +22,20 @@ function MaritalBadge({ status }: { status: string }) {
   );
 }
 
+function buildHalSarnamu(home: {
+  current_house_no?: string | null; current_area?: string | null; current_landmark?: string | null;
+  current_city?: string | null; current_district?: string | null; current_pincode?: string | null;
+}): string {
+  return [
+    home.current_house_no, home.current_area, home.current_landmark,
+    home.current_city, home.current_district, home.current_pincode,
+  ].filter(Boolean).join(", ");
+}
+
 export default function Directory() {
   const { data: homes, isLoading } = useGetHomes();
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -38,12 +48,14 @@ export default function Directory() {
   const filteredHomes = homes?.filter((home) => {
     const term = searchTerm.toLowerCase();
     const firstMember = home.members?.slice().sort((a, b) => a.sr_no - b.sr_no)[0];
+    const halSarnamu = buildHalSarnamu(home).toLowerCase();
     return (
       home.kutumb_vada_name.toLowerCase().includes(term) ||
       home.address.village.toLowerCase().includes(term) ||
       home.address.faliya.toLowerCase().includes(term) ||
       (firstMember?.name || "").toLowerCase().includes(term) ||
-      home.members?.some(m => m.name.toLowerCase().includes(term))
+      home.members?.some(m => m.name.toLowerCase().includes(term)) ||
+      halSarnamu.includes(term)
     );
   });
 
@@ -51,10 +63,10 @@ export default function Directory() {
     <div className="space-y-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h1 className="text-3xl font-bold text-secondary">ઘર ડિરેક્ટ્રી</h1>
-        <div className="relative w-full md:w-72">
+        <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
           <Input
-            placeholder="નામ, કુટુંબ વડા, ફળિયા, ગામ..."
+            placeholder="નામ, ગામ, ફળિયા, હાલનું સરનામું..."
             className="pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -67,6 +79,7 @@ export default function Directory() {
           {filteredHomes?.map((home, i) => {
             const sortedMembers = home.members?.slice().sort((a, b) => a.sr_no - b.sr_no) || [];
             const firstMember = sortedMembers[0];
+            const halSarnamu = buildHalSarnamu(home);
 
             return (
               <motion.div
@@ -125,6 +138,8 @@ export default function Directory() {
                                     <th className="px-4 py-3 font-semibold">સંબંધ</th>
                                     <th className="px-4 py-3 font-semibold">જન્મ તારીખ</th>
                                     <th className="px-4 py-3 font-semibold">વ્યવસાય</th>
+                                    <th className="px-4 py-3 font-semibold">અભ્યાસ</th>
+                                    <th className="px-4 py-3 font-semibold">લાયકાત</th>
                                     <th className="px-4 py-3 font-semibold">સ્થિતિ</th>
                                     <th className="px-4 py-3 font-semibold">મોબાઇલ</th>
                                   </tr>
@@ -137,6 +152,8 @@ export default function Directory() {
                                       <td className="px-4 py-3">{member.relation}</td>
                                       <td className="px-4 py-3">{member.dob || "-"}</td>
                                       <td className="px-4 py-3">{member.occupation || "-"}</td>
+                                      <td className="px-4 py-3">{member.education || "-"}</td>
+                                      <td className="px-4 py-3">{member.qualification || "-"}</td>
                                       <td className="px-4 py-3">
                                         <MaritalBadge status={member.marital_status} />
                                       </td>
@@ -145,7 +162,7 @@ export default function Directory() {
                                   ))}
                                   {sortedMembers.length === 0 && (
                                     <tr>
-                                      <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                                      <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
                                         કોઈ સભ્યો નોંધાયેલા નથી
                                       </td>
                                     </tr>
@@ -154,6 +171,33 @@ export default function Directory() {
                               </table>
                             </div>
                           </div>
+
+                          {/* Hal nu sarnamu */}
+                          {halSarnamu && (
+                            <div className="rounded-xl border border-orange-200 bg-white p-4">
+                              <h4 className="font-bold text-secondary mb-3 text-sm">હાલ નું સરનામું</h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                {home.current_house_no && (
+                                  <div><span className="text-muted-foreground">ઘર નંબર: </span><span className="font-medium">{home.current_house_no}</span></div>
+                                )}
+                                {home.current_area && (
+                                  <div><span className="text-muted-foreground">એરિયા: </span><span className="font-medium">{home.current_area}</span></div>
+                                )}
+                                {home.current_landmark && (
+                                  <div className="sm:col-span-2"><span className="text-muted-foreground">નજીકનું સ્થળ: </span><span className="font-medium">{home.current_landmark}</span></div>
+                                )}
+                                {home.current_city && (
+                                  <div><span className="text-muted-foreground">શહેર: </span><span className="font-medium">{home.current_city}</span></div>
+                                )}
+                                {home.current_district && (
+                                  <div><span className="text-muted-foreground">જિલ્લો: </span><span className="font-medium">{home.current_district}</span></div>
+                                )}
+                                {home.current_pincode && (
+                                  <div><span className="text-muted-foreground">પિન કોડ: </span><span className="font-medium">{home.current_pincode}</span></div>
+                                )}
+                              </div>
+                            </div>
+                          )}
 
                           {/* Kutumb Vada Details below members */}
                           <div className="rounded-xl border border-orange-200 bg-white p-4">

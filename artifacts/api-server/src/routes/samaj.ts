@@ -1,20 +1,32 @@
 import { Router, type IRouter } from "express";
-import { db } from "@workspace/db";
-import { samajTable, leadersTable } from "@workspace/db";
-import { eq, asc } from "drizzle-orm";
+import { SamajModel, LeaderModel, type LeaderDoc } from "@workspace/db";
 import { requireAuth, requireRole } from "../middlewares/auth.js";
 
 const router: IRouter = Router();
 
+function serializeSamaj(doc: { _id: { toString(): string }; samaj_name: string }) {
+  return { id: doc._id.toString(), samaj_name: doc.samaj_name };
+}
+
+function serializeLeader(doc: LeaderDoc) {
+  return {
+    id: doc._id.toString(),
+    name: doc.name,
+    role: doc.role,
+    mobile: doc.mobile ?? null,
+    address: doc.address ?? null,
+    order: doc.order,
+  };
+}
+
 router.get("/", async (req, res) => {
   try {
-    const rows = await db.select().from(samajTable).limit(1);
-    if (rows.length === 0) {
-      const [created] = await db.insert(samajTable).values({ samaj_name: "સમાજ પરિવાર ડિરેક્ટ્રી" }).returning();
-      res.json(created);
-      return;
+    let samaj = await SamajModel.findOne().lean();
+    if (!samaj) {
+      const created = await SamajModel.create({ samaj_name: "સમાજ પરિવાર ડિરેક્ટ્રી" });
+      samaj = created.toObject();
     }
-    res.json(rows[0]);
+    res.json(serializeSamaj(samaj));
   } catch (err) {
     req.log.error({ err }, "Get samaj error");
     res.status(500).json({ error: "Server error" });
@@ -29,15 +41,14 @@ router.put("/", requireAuth, requireRole("super_admin"), async (req, res) => {
       return;
     }
 
-    const existing = await db.select().from(samajTable).limit(1);
-    if (existing.length === 0) {
-      const [created] = await db.insert(samajTable).values({ samaj_name }).returning();
-      res.json(created);
-      return;
+    let samaj = await SamajModel.findOne();
+    if (!samaj) {
+      samaj = await SamajModel.create({ samaj_name });
+    } else {
+      samaj.samaj_name = samaj_name;
+      await samaj.save();
     }
-
-    const [updated] = await db.update(samajTable).set({ samaj_name }).where(eq(samajTable.id, existing[0].id)).returning();
-    res.json(updated);
+    res.json(serializeSamaj(samaj.toObject()));
   } catch (err) {
     req.log.error({ err }, "Update samaj error");
     res.status(500).json({ error: "Server error" });
@@ -46,8 +57,8 @@ router.put("/", requireAuth, requireRole("super_admin"), async (req, res) => {
 
 router.get("/leaders", async (req, res) => {
   try {
-    const leaders = await db.select().from(leadersTable).orderBy(asc(leadersTable.order));
-    res.json(leaders);
+    const leaders = await LeaderModel.find().sort({ order: 1 });
+    res.json(leaders.map((l) => serializeLeader(l.toObject() as LeaderDoc)));
   } catch (err) {
     req.log.error({ err }, "Get leaders error");
     res.status(500).json({ error: "Server error" });
@@ -62,11 +73,15 @@ router.post("/leaders", requireAuth, requireRole("super_admin"), async (req, res
       return;
     }
 
-    const allLeaders = await db.select().from(leadersTable);
-    const nextOrder = order ?? allLeaders.length + 1;
-
-    const [leader] = await db.insert(leadersTable).values({ name, role, mobile, address, order: nextOrder }).returning();
-    res.status(201).json(leader);
+    const count = await LeaderModel.countDocuments();
+    const nextOrder = order ?? count + 1;
+    const leader = await LeaderModel.create({
+      name, role,
+      mobile: mobile || null,
+      address: address || null,
+      order: nextOrder,
+    });
+    res.status(201).json(serializeLeader(leader.toObject() as LeaderDoc));
   } catch (err) {
     req.log.error({ err }, "Create leader error");
     res.status(500).json({ error: "Server error" });
@@ -75,24 +90,22 @@ router.post("/leaders", requireAuth, requireRole("super_admin"), async (req, res
 
 router.put("/leaders/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    const { name, role, mobile, address, order } = req.body;
-
-    const existing = await db.select().from(leadersTable).where(eq(leadersTable.id, id)).limit(1);
-    if (existing.length === 0) {
+    const { id } = req.params;
+    const leader = await LeaderModel.findById(id);
+    if (!leader) {
       res.status(404).json({ error: "Leader not found" });
       return;
     }
 
-    const updates: Partial<typeof existing[0]> = {};
-    if (name !== undefined) updates.name = name;
-    if (role !== undefined) updates.role = role;
-    if (mobile !== undefined) updates.mobile = mobile;
-    if (address !== undefined) updates.address = address;
-    if (order !== undefined) updates.order = order;
+    const { name, role, mobile, address, order } = req.body;
+    if (name !== undefined) leader.name = name;
+    if (role !== undefined) leader.role = role;
+    if (mobile !== undefined) leader.mobile = mobile;
+    if (address !== undefined) leader.address = address;
+    if (order !== undefined) leader.order = order;
+    await leader.save();
 
-    const [updated] = await db.update(leadersTable).set(updates).where(eq(leadersTable.id, id)).returning();
-    res.json(updated);
+    res.json(serializeLeader(leader.toObject() as LeaderDoc));
   } catch (err) {
     req.log.error({ err }, "Update leader error");
     res.status(500).json({ error: "Server error" });
@@ -101,13 +114,12 @@ router.put("/leaders/:id", requireAuth, requireRole("super_admin"), async (req, 
 
 router.delete("/leaders/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    const existing = await db.select().from(leadersTable).where(eq(leadersTable.id, id)).limit(1);
-    if (existing.length === 0) {
+    const { id } = req.params;
+    const result = await LeaderModel.findByIdAndDelete(id);
+    if (!result) {
       res.status(404).json({ error: "Leader not found" });
       return;
     }
-    await db.delete(leadersTable).where(eq(leadersTable.id, id));
     res.json({ success: true, message: "Leader deleted" });
   } catch (err) {
     req.log.error({ err }, "Delete leader error");
@@ -117,17 +129,15 @@ router.delete("/leaders/:id", requireAuth, requireRole("super_admin"), async (re
 
 router.post("/leaders/:id/move", requireAuth, requireRole("super_admin"), async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const { id } = req.params;
     const { direction } = req.body;
-
     if (direction !== "up" && direction !== "down") {
       res.status(400).json({ error: "direction must be 'up' or 'down'" });
       return;
     }
 
-    const leaders = await db.select().from(leadersTable).orderBy(asc(leadersTable.order));
-    const idx = leaders.findIndex((l) => l.id === id);
-
+    const leaders = await LeaderModel.find().sort({ order: 1 });
+    const idx = leaders.findIndex((l) => l._id.toString() === id);
     if (idx === -1) {
       res.status(404).json({ error: "Leader not found" });
       return;
@@ -141,9 +151,11 @@ router.post("/leaders/:id/move", requireAuth, requireRole("super_admin"), async 
 
     const current = leaders[idx];
     const swap = leaders[swapIdx];
-
-    await db.update(leadersTable).set({ order: swap.order }).where(eq(leadersTable.id, current.id));
-    await db.update(leadersTable).set({ order: current.order }).where(eq(leadersTable.id, swap.id));
+    const tmp = current.order;
+    current.order = swap.order;
+    swap.order = tmp;
+    await current.save();
+    await swap.save();
 
     res.json({ success: true, message: "Moved successfully" });
   } catch (err) {

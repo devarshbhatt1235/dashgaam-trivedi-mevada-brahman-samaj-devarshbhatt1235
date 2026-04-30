@@ -12,9 +12,9 @@ A full-stack web application for managing a Samaj (community) family directory w
 - **TypeScript version**: 5.9
 - **Frontend**: React + Vite (Wouter routing, TanStack Query, Framer Motion)
 - **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
+- **Database**: MongoDB + Mongoose (connection via `MONGODB_URI` secret)
 - **Auth**: JWT (jsonwebtoken) + bcrypt (bcryptjs)
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
+- **Validation**: Zod (`zod/v4`)
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 - **UI Language**: Gujarati (Noto Sans Gujarati font)
@@ -30,13 +30,11 @@ artifacts-monorepo/
 │   ├── api-spec/            # OpenAPI spec + Orval codegen config
 │   ├── api-client-react/    # Generated React Query hooks
 │   ├── api-zod/             # Generated Zod schemas from OpenAPI
-│   └── db/                  # Drizzle ORM schema + DB connection
+│   └── db/                  # Mongoose models + MongoDB connection
 │       └── src/schema/
-│           ├── users.ts     # Users table (home_admin, super_admin roles)
-│           ├── samaj.ts     # Samaj info + Leaders tables
-│           └── homes.ts     # Homes + Members tables
-├── scripts/                 # Utility scripts
-│   └── src/seed-users.ts    # Seeds homeadmin and superadmin users
+│           ├── users.ts     # User model (home_admin, super_admin roles)
+│           ├── samaj.ts     # Samaj + Leader models
+│           └── homes.ts     # Home model with embedded Member subdocs
 ```
 
 ## User Roles & Credentials
@@ -54,13 +52,14 @@ artifacts-monorepo/
 - `/home` — Protected (home_admin): Add home + multiple members dynamically
 - `/admin` — Protected (super_admin): Edit samaj name, CRUD leaders, reorder
 
-## Database Tables
+## Database Collections (MongoDB)
 
 - `users` — username, password (bcrypt), role
-- `samaj` — samaj_name
+- `samaj` — samaj_name (single document)
 - `leaders` — name, role, mobile, address, order
-- `homes` — kutumb_vada_name, kutumb_vada_address, house_no, faliya, village
-- `members` — home_id (FK), sr_no, name, dob, occupation, relation, marital_status, mobile
+- `homes` — kutumb_vada_name, kutumb_vada_address, address.{house_no, faliya, village},
+  current address (current_house_no, current_area, current_landmark, current_city, current_district, current_pincode),
+  embedded `members[]` subdocuments — sr_no, name, dob, occupation, relation, marital_status, mobile, education, qualification
 
 ## API Routes
 
@@ -78,13 +77,7 @@ All under `/api`:
 
 ```bash
 pnpm install
-pnpm --filter @workspace/db run push
-pnpm --filter @workspace/scripts run seed-users
-# Start workflows
-```
-
-## Seeding
-
-```bash
-pnpm --filter @workspace/scripts run seed-users
+# Set MONGODB_URI secret, then start workflows.
+# The api-server auto-seeds default users, samaj name, and leaders on first connect
+# whenever the collections are empty.
 ```

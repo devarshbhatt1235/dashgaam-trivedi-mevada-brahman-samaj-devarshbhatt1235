@@ -25,7 +25,7 @@ export const LoginBody = zod.object({
 export const LoginResponse = zod.object({
   token: zod.string(),
   user: zod.object({
-    id: zod.number(),
+    id: zod.string(),
     username: zod.string(),
     role: zod.enum(["home_admin", "super_admin"]),
   }),
@@ -35,7 +35,7 @@ export const LoginResponse = zod.object({
  * @summary Get current user
  */
 export const GetMeResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   username: zod.string(),
   role: zod.enum(["home_admin", "super_admin"]),
 });
@@ -44,7 +44,7 @@ export const GetMeResponse = zod.object({
  * @summary Get samaj info
  */
 export const GetSamajResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   samaj_name: zod.string(),
 });
 
@@ -56,7 +56,7 @@ export const UpdateSamajBody = zod.object({
 });
 
 export const UpdateSamajResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   samaj_name: zod.string(),
 });
 
@@ -64,11 +64,11 @@ export const UpdateSamajResponse = zod.object({
  * @summary Get all leaders sorted by order
  */
 export const GetLeadersResponseItem = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   name: zod.string(),
   role: zod.string(),
-  mobile: zod.string().optional(),
-  address: zod.string().optional(),
+  mobile: zod.string().nullish(),
+  address: zod.string().nullish(),
   order: zod.number(),
 });
 export const GetLeadersResponse = zod.array(GetLeadersResponseItem);
@@ -88,7 +88,7 @@ export const CreateLeaderBody = zod.object({
  * @summary Update a leader (super admin only)
  */
 export const UpdateLeaderParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const UpdateLeaderBody = zod.object({
@@ -100,11 +100,11 @@ export const UpdateLeaderBody = zod.object({
 });
 
 export const UpdateLeaderResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   name: zod.string(),
   role: zod.string(),
-  mobile: zod.string().optional(),
-  address: zod.string().optional(),
+  mobile: zod.string().nullish(),
+  address: zod.string().nullish(),
   order: zod.number(),
 });
 
@@ -112,7 +112,7 @@ export const UpdateLeaderResponse = zod.object({
  * @summary Delete a leader (super admin only)
  */
 export const DeleteLeaderParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const DeleteLeaderResponse = zod.object({
@@ -124,7 +124,7 @@ export const DeleteLeaderResponse = zod.object({
  * @summary Move leader up or down (super admin only)
  */
 export const MoveLeaderParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const MoveLeaderBody = zod.object({
@@ -140,9 +140,18 @@ export const MoveLeaderResponse = zod.object({
  * @summary Get all homes sorted by village then faliya
  */
 export const GetHomesResponseItem = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   kutumb_vada_name: zod.string(),
   kutumb_vada_address: zod.string(),
+  house_no: zod.string().optional(),
+  faliya: zod.string().optional(),
+  village: zod.string().optional(),
+  current_house_no: zod.string().nullish(),
+  current_area: zod.string().nullish(),
+  current_landmark: zod.string().nullish(),
+  current_city: zod.string().nullish(),
+  current_district: zod.string().nullish(),
+  current_pincode: zod.string().nullish(),
   address: zod.object({
     house_no: zod.string(),
     faliya: zod.string(),
@@ -150,26 +159,34 @@ export const GetHomesResponseItem = zod.object({
   }),
   current_address: zod
     .object({
-      current_house_no: zod.string().optional(),
-      current_area: zod.string().optional(),
-      current_landmark: zod.string().optional(),
-      current_city: zod.string().optional(),
-      current_district: zod.string().optional(),
-      current_pincode: zod.string().optional(),
+      current_house_no: zod.string().nullish(),
+      current_area: zod.string().nullish(),
+      current_landmark: zod.string().nullish(),
+      current_city: zod.string().nullish(),
+      current_district: zod.string().nullish(),
+      current_pincode: zod.string().nullish(),
     })
     .optional(),
   members: zod
     .array(
       zod.object({
-        id: zod.number(),
+        id: zod.string(),
         sr_no: zod.number(),
         name: zod.string(),
-        dob: zod.string().optional(),
-        occupation: zod.string().optional(),
+        dob: zod.string().nullish(),
+        occupation: zod.string().nullish(),
         relation: zod.string(),
-        marital_status: zod.enum(["married", "unmarried"]),
-        mobile: zod.string().optional(),
-        home_id: zod.number(),
+        marital_status: zod.enum([
+          "married",
+          "unmarried",
+          "vidhur",
+          "vidhva",
+          "chhutachheda",
+        ]),
+        mobile: zod.string().nullish(),
+        education: zod.string().nullish(),
+        qualification: zod.string().nullish(),
+        home_id: zod.string(),
       }),
     )
     .optional(),
@@ -199,8 +216,16 @@ export const CreateHomeBody = zod.object({
         dob: zod.string().optional(),
         occupation: zod.string().optional(),
         relation: zod.string(),
-        marital_status: zod.enum(["married", "unmarried"]),
+        marital_status: zod.enum([
+          "married",
+          "unmarried",
+          "vidhur",
+          "vidhva",
+          "chhutachheda",
+        ]),
         mobile: zod.string().optional(),
+        education: zod.string().optional(),
+        qualification: zod.string().optional(),
       }),
     )
     .optional(),
@@ -210,13 +235,22 @@ export const CreateHomeBody = zod.object({
  * @summary Get a specific home
  */
 export const GetHomeParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const GetHomeResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   kutumb_vada_name: zod.string(),
   kutumb_vada_address: zod.string(),
+  house_no: zod.string().optional(),
+  faliya: zod.string().optional(),
+  village: zod.string().optional(),
+  current_house_no: zod.string().nullish(),
+  current_area: zod.string().nullish(),
+  current_landmark: zod.string().nullish(),
+  current_city: zod.string().nullish(),
+  current_district: zod.string().nullish(),
+  current_pincode: zod.string().nullish(),
   address: zod.object({
     house_no: zod.string(),
     faliya: zod.string(),
@@ -224,26 +258,34 @@ export const GetHomeResponse = zod.object({
   }),
   current_address: zod
     .object({
-      current_house_no: zod.string().optional(),
-      current_area: zod.string().optional(),
-      current_landmark: zod.string().optional(),
-      current_city: zod.string().optional(),
-      current_district: zod.string().optional(),
-      current_pincode: zod.string().optional(),
+      current_house_no: zod.string().nullish(),
+      current_area: zod.string().nullish(),
+      current_landmark: zod.string().nullish(),
+      current_city: zod.string().nullish(),
+      current_district: zod.string().nullish(),
+      current_pincode: zod.string().nullish(),
     })
     .optional(),
   members: zod
     .array(
       zod.object({
-        id: zod.number(),
+        id: zod.string(),
         sr_no: zod.number(),
         name: zod.string(),
-        dob: zod.string().optional(),
-        occupation: zod.string().optional(),
+        dob: zod.string().nullish(),
+        occupation: zod.string().nullish(),
         relation: zod.string(),
-        marital_status: zod.enum(["married", "unmarried"]),
-        mobile: zod.string().optional(),
-        home_id: zod.number(),
+        marital_status: zod.enum([
+          "married",
+          "unmarried",
+          "vidhur",
+          "vidhva",
+          "chhutachheda",
+        ]),
+        mobile: zod.string().nullish(),
+        education: zod.string().nullish(),
+        qualification: zod.string().nullish(),
+        home_id: zod.string(),
       }),
     )
     .optional(),
@@ -253,7 +295,7 @@ export const GetHomeResponse = zod.object({
  * @summary Update home details (super admin only)
  */
 export const UpdateHomeParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const UpdateHomeBody = zod.object({
@@ -271,9 +313,18 @@ export const UpdateHomeBody = zod.object({
 });
 
 export const UpdateHomeResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   kutumb_vada_name: zod.string(),
   kutumb_vada_address: zod.string(),
+  house_no: zod.string().optional(),
+  faliya: zod.string().optional(),
+  village: zod.string().optional(),
+  current_house_no: zod.string().nullish(),
+  current_area: zod.string().nullish(),
+  current_landmark: zod.string().nullish(),
+  current_city: zod.string().nullish(),
+  current_district: zod.string().nullish(),
+  current_pincode: zod.string().nullish(),
   address: zod.object({
     house_no: zod.string(),
     faliya: zod.string(),
@@ -281,26 +332,34 @@ export const UpdateHomeResponse = zod.object({
   }),
   current_address: zod
     .object({
-      current_house_no: zod.string().optional(),
-      current_area: zod.string().optional(),
-      current_landmark: zod.string().optional(),
-      current_city: zod.string().optional(),
-      current_district: zod.string().optional(),
-      current_pincode: zod.string().optional(),
+      current_house_no: zod.string().nullish(),
+      current_area: zod.string().nullish(),
+      current_landmark: zod.string().nullish(),
+      current_city: zod.string().nullish(),
+      current_district: zod.string().nullish(),
+      current_pincode: zod.string().nullish(),
     })
     .optional(),
   members: zod
     .array(
       zod.object({
-        id: zod.number(),
+        id: zod.string(),
         sr_no: zod.number(),
         name: zod.string(),
-        dob: zod.string().optional(),
-        occupation: zod.string().optional(),
+        dob: zod.string().nullish(),
+        occupation: zod.string().nullish(),
         relation: zod.string(),
-        marital_status: zod.enum(["married", "unmarried"]),
-        mobile: zod.string().optional(),
-        home_id: zod.number(),
+        marital_status: zod.enum([
+          "married",
+          "unmarried",
+          "vidhur",
+          "vidhva",
+          "chhutachheda",
+        ]),
+        mobile: zod.string().nullish(),
+        education: zod.string().nullish(),
+        qualification: zod.string().nullish(),
+        home_id: zod.string(),
       }),
     )
     .optional(),
@@ -310,7 +369,7 @@ export const UpdateHomeResponse = zod.object({
  * @summary Delete an entire home and all its members (super admin only)
  */
 export const DeleteHomeParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const DeleteHomeResponse = zod.object({
@@ -322,7 +381,7 @@ export const DeleteHomeResponse = zod.object({
  * @summary Add a member to an existing home (home admin only)
  */
 export const AddMemberParams = zod.object({
-  id: zod.coerce.number(),
+  id: zod.coerce.string(),
 });
 
 export const AddMemberBody = zod.object({
@@ -331,16 +390,24 @@ export const AddMemberBody = zod.object({
   dob: zod.string().optional(),
   occupation: zod.string().optional(),
   relation: zod.string(),
-  marital_status: zod.enum(["married", "unmarried"]),
+  marital_status: zod.enum([
+    "married",
+    "unmarried",
+    "vidhur",
+    "vidhva",
+    "chhutachheda",
+  ]),
   mobile: zod.string().optional(),
+  education: zod.string().optional(),
+  qualification: zod.string().optional(),
 });
 
 /**
  * @summary Update a member's details (super admin only)
  */
 export const UpdateMemberParams = zod.object({
-  id: zod.coerce.number(),
-  memberId: zod.coerce.number(),
+  id: zod.coerce.string(),
+  memberId: zod.coerce.string(),
 });
 
 export const UpdateMemberBody = zod.object({
@@ -349,28 +416,40 @@ export const UpdateMemberBody = zod.object({
   dob: zod.string().optional(),
   occupation: zod.string().optional(),
   relation: zod.string().optional(),
-  marital_status: zod.enum(["married", "unmarried"]).optional(),
+  marital_status: zod
+    .enum(["married", "unmarried", "vidhur", "vidhva", "chhutachheda"])
+    .optional(),
   mobile: zod.string().optional(),
+  education: zod.string().optional(),
+  qualification: zod.string().optional(),
 });
 
 export const UpdateMemberResponse = zod.object({
-  id: zod.number(),
+  id: zod.string(),
   sr_no: zod.number(),
   name: zod.string(),
-  dob: zod.string().optional(),
-  occupation: zod.string().optional(),
+  dob: zod.string().nullish(),
+  occupation: zod.string().nullish(),
   relation: zod.string(),
-  marital_status: zod.enum(["married", "unmarried"]),
-  mobile: zod.string().optional(),
-  home_id: zod.number(),
+  marital_status: zod.enum([
+    "married",
+    "unmarried",
+    "vidhur",
+    "vidhva",
+    "chhutachheda",
+  ]),
+  mobile: zod.string().nullish(),
+  education: zod.string().nullish(),
+  qualification: zod.string().nullish(),
+  home_id: zod.string(),
 });
 
 /**
  * @summary Delete a single member from a home (super admin only)
  */
 export const DeleteMemberParams = zod.object({
-  id: zod.coerce.number(),
-  memberId: zod.coerce.number(),
+  id: zod.coerce.string(),
+  memberId: zod.coerce.string(),
 });
 
 export const DeleteMemberResponse = zod.object({

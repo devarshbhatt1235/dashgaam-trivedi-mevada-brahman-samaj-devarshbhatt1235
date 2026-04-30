@@ -1,3 +1,3 @@
-export * from "./users";
-export * from "./samaj";
-export * from "./homes";
+export * from "./users.js";
+export * from "./samaj.js";
+export * from "./homes.js";

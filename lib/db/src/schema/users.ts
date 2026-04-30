@@ -1,14 +1,21 @@
-import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
-export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: varchar("username", { length: 100 }).notNull().unique(),
-  password: text("password").notNull(),
-  role: varchar("role", { length: 20 }).notNull().default("home_admin"),
-});
+const userSchema = new Schema(
+  {
+    username: { type: String, required: true, unique: true, index: true },
+    password: { type: String, required: true },
+    role: { type: String, required: true, default: "home_admin" },
+  },
+  { timestamps: false },
+);
 
-export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true });
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof usersTable.$inferSelect;
+export type UserDoc = InferSchemaType<typeof userSchema> & { _id: mongoose.Types.ObjectId };
+export type User = {
+  id: string;
+  username: string;
+  password: string;
+  role: string;
+};
+
+export const UserModel = (mongoose.models.User as mongoose.Model<UserDoc>) ||
+  mongoose.model<UserDoc>("User", userSchema);

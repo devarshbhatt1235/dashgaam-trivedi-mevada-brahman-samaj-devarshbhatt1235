@@ -10,9 +10,18 @@ import type { CurrentAddress } from "./currentAddress";
 import type { Member } from "./member";
 
 export interface Home {
-  id: number;
+  id: string;
   kutumb_vada_name: string;
   kutumb_vada_address: string;
+  house_no?: string;
+  faliya?: string;
+  village?: string;
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
   address: Address;
   current_address?: CurrentAddress;
   members?: Member[];

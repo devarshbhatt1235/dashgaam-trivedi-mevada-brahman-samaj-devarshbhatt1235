@@ -15,4 +15,6 @@ export interface UpdateMemberRequest {
   relation?: string;
   marital_status?: UpdateMemberRequestMaritalStatus;
   mobile?: string;
+  education?: string;
+  qualification?: string;
 }

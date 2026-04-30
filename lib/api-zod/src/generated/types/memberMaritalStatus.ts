@@ -12,4 +12,7 @@ export type MemberMaritalStatus =
 export const MemberMaritalStatus = {
   married: "married",
   unmarried: "unmarried",
+  vidhur: "vidhur",
+  vidhva: "vidhva",
+  chhutachheda: "chhutachheda",
 } as const;

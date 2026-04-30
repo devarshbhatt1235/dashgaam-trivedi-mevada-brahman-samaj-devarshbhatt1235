@@ -1,39 +1,69 @@
-import { pgTable, serial, text, integer, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
-export const homesTable = pgTable("homes", {
-  id: serial("id").primaryKey(),
-  kutumb_vada_name: text("kutumb_vada_name").notNull(),
-  kutumb_vada_address: text("kutumb_vada_address").notNull(),
-  house_no: varchar("house_no", { length: 50 }).notNull(),
-  faliya: varchar("faliya", { length: 100 }).notNull(),
-  village: varchar("village", { length: 100 }).notNull(),
-  // Current Address (હાલ નું સરનામું)
-  current_house_no: varchar("current_house_no", { length: 50 }),
-  current_area: varchar("current_area", { length: 150 }),
-  current_landmark: varchar("current_landmark", { length: 200 }),
-  current_city: varchar("current_city", { length: 100 }),
-  current_district: varchar("current_district", { length: 100 }),
-  current_pincode: varchar("current_pincode", { length: 10 }),
+const memberSchema = new Schema({
+  sr_no: { type: Number, required: true },
+  name: { type: String, required: true },
+  dob: { type: String, default: null },
+  occupation: { type: String, default: null },
+  relation: { type: String, required: true },
+  marital_status: { type: String, required: true, default: "unmarried" },
+  mobile: { type: String, default: null },
+  // New fields:
+  education: { type: String, default: null }, // અભ્યાસ
+  qualification: { type: String, default: null }, // લાયકાત
 });
 
-export const membersTable = pgTable("members", {
-  id: serial("id").primaryKey(),
-  home_id: integer("home_id").notNull().references(() => homesTable.id, { onDelete: "cascade" }),
-  sr_no: integer("sr_no").notNull(),
-  name: text("name").notNull(),
-  dob: varchar("dob", { length: 20 }),
-  occupation: text("occupation"),
-  relation: text("relation").notNull(),
-  marital_status: varchar("marital_status", { length: 20 }).notNull().default("unmarried"),
-  mobile: varchar("mobile", { length: 20 }),
+export type EmbeddedMember = InferSchemaType<typeof memberSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+const homeSchema = new Schema({
+  kutumb_vada_name: { type: String, required: true },
+  kutumb_vada_address: { type: String, required: true },
+  // Ghar nu sarnamu
+  house_no: { type: String, required: true },
+  faliya: { type: String, required: true },
+  village: { type: String, required: true },
+  // Hal nu sarnamu (current address)
+  current_house_no: { type: String, default: null },
+  current_area: { type: String, default: null },
+  current_landmark: { type: String, default: null },
+  current_city: { type: String, default: null },
+  current_district: { type: String, default: null },
+  current_pincode: { type: String, default: null },
+  members: { type: [memberSchema], default: [] },
 });
 
-export const insertHomeSchema = createInsertSchema(homesTable).omit({ id: true });
-export const insertMemberSchema = createInsertSchema(membersTable).omit({ id: true });
+export type HomeDoc = InferSchemaType<typeof homeSchema> & { _id: mongoose.Types.ObjectId };
 
-export type InsertHome = z.infer<typeof insertHomeSchema>;
-export type Home = typeof homesTable.$inferSelect;
-export type InsertMember = z.infer<typeof insertMemberSchema>;
-export type Member = typeof membersTable.$inferSelect;
+export const HomeModel = (mongoose.models.Home as mongoose.Model<HomeDoc>) ||
+  mongoose.model<HomeDoc>("Home", homeSchema);
+
+export type Member = {
+  id: string;
+  sr_no: number;
+  name: string;
+  dob?: string | null;
+  occupation?: string | null;
+  relation: string;
+  marital_status: string;
+  mobile?: string | null;
+  education?: string | null;
+  qualification?: string | null;
+  home_id: string;
+};
+
+export type Home = {
+  id: string;
+  kutumb_vada_name: string;
+  kutumb_vada_address: string;
+  house_no: string;
+  faliya: string;
+  village: string;
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
+};

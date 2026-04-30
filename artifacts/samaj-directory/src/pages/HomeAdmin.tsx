@@ -16,6 +16,8 @@ const memberSchema = z.object({
   relation: z.string().min(1, "સંબંધ જરૂરી છે"),
   marital_status: z.enum(["married", "unmarried", "vidhur", "vidhva", "chhutachheda"]),
   mobile: z.string().optional(),
+  education: z.string().optional(),
+  qualification: z.string().optional(),
 });
 
 const formSchema = z.object({
@@ -24,6 +26,12 @@ const formSchema = z.object({
   house_no: z.string().min(1, "ઘર નંબર જરૂરી છે"),
   faliya: z.string().min(1, "ફળિયા જરૂરી છે"),
   village: z.string().min(1, "ગામ જરૂરી છે"),
+  current_house_no: z.string().optional(),
+  current_area: z.string().optional(),
+  current_landmark: z.string().optional(),
+  current_city: z.string().optional(),
+  current_district: z.string().optional(),
+  current_pincode: z.string().optional(),
   members: z.array(memberSchema).min(1, "ઓછામાં ઓછો એક સભ્ય ઉમેરો"),
 });
 
@@ -32,7 +40,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function HomeAdmin() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
-  
+
   const createHomeMutation = useCreateHome({
     mutation: {
       onSuccess: () => {
@@ -53,6 +61,12 @@ export default function HomeAdmin() {
       house_no: "",
       faliya: "",
       village: "",
+      current_house_no: "",
+      current_area: "",
+      current_landmark: "",
+      current_city: "",
+      current_district: "",
+      current_pincode: "",
       members: [{ sr_no: 1, name: "", relation: "પોતે", marital_status: "married" }]
     }
   });
@@ -108,9 +122,9 @@ export default function HomeAdmin() {
 
           <div className="border-t border-dashed border-orange-200" />
 
-          {/* Home Address */}
+          {/* Home Address — Ghar nu sarnamu */}
           <div>
-            <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4">ઘરનું સરનામું</h3>
+            <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4">ઘર નું સરનામું</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>ઘર નંબર</Label>
@@ -135,15 +149,48 @@ export default function HomeAdmin() {
               </div>
             </div>
           </div>
+
+          <div className="border-t border-dashed border-orange-200" />
+
+          {/* Current Address — Hal nu sarnamu */}
+          <div>
+            <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4">હાલ નું સરનામું</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>ઘર નંબર</Label>
+                <Input {...form.register("current_house_no")} placeholder="દા.ત. A-12" />
+              </div>
+              <div className="space-y-2">
+                <Label>એરિયા / સોસાયટી</Label>
+                <Input {...form.register("current_area")} placeholder="એરિયા / સોસાયટી" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>નજીકનું સ્થળ <span className="text-muted-foreground text-xs">(વૈકલ્પિક)</span></Label>
+                <Input {...form.register("current_landmark")} placeholder="દા.ત. શાળા પાછળ" />
+              </div>
+              <div className="space-y-2">
+                <Label>શહેર</Label>
+                <Input {...form.register("current_city")} placeholder="શહેરનું નામ" />
+              </div>
+              <div className="space-y-2">
+                <Label>જિલ્લો</Label>
+                <Input {...form.register("current_district")} placeholder="જિલ્લાનું નામ" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>પિન કોડ</Label>
+                <Input {...form.register("current_pincode")} placeholder="6 અંકનો પિન કોડ" />
+              </div>
+            </div>
+          </div>
         </Card>
 
         <Card className="border-t-4 border-t-secondary">
           <div className="flex justify-between items-center mb-6 pb-2 border-b">
             <h2 className="text-xl font-bold text-foreground">સભ્યોની યાદી</h2>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => append({ sr_no: fields.length + 1, name: "", relation: "", marital_status: "married" })}
             >
               <Plus className="w-4 h-4 mr-1" /> નવો સભ્ય ઉમેરો
@@ -165,7 +212,7 @@ export default function HomeAdmin() {
                     <Trash2 className="w-5 h-5" />
                   </button>
                 )}
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>ક્રમ</Label>
@@ -200,7 +247,15 @@ export default function HomeAdmin() {
                       <option value="chhutachheda">છૂટાછેડા</option>
                     </Select>
                   </div>
-                  <div className="space-y-2 lg:col-span-3">
+                  <div className="space-y-2">
+                    <Label>અભ્યાસ</Label>
+                    <Input {...form.register(`members.${index}.education`)} placeholder="દા.ત. 12 પાસ" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>લાયકાત</Label>
+                    <Input {...form.register(`members.${index}.qualification`)} placeholder="દા.ત. B.Com, ITI" />
+                  </div>
+                  <div className="space-y-2">
                     <Label>મોબાઇલ નંબર</Label>
                     <Input {...form.register(`members.${index}.mobile`)} />
                   </div>
@@ -211,8 +266,8 @@ export default function HomeAdmin() {
         </Card>
 
         <div className="flex justify-end pt-4">
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full md:w-auto px-12 text-lg"
             disabled={createHomeMutation.isPending}
           >

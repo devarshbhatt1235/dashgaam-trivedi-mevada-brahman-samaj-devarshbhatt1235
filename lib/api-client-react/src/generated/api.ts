@@ -583,12 +583,12 @@ export const useCreateLeader = <
 /**
  * @summary Update a leader (super admin only)
  */
-export const getUpdateLeaderUrl = (id: number) => {
+export const getUpdateLeaderUrl = (id: string) => {
   return `/api/samaj/leaders/${id}`;
 };
 
 export const updateLeader = async (
-  id: number,
+  id: string,
   updateLeaderRequest: UpdateLeaderRequest,
   options?: RequestInit,
 ): Promise<Leader> => {
@@ -607,14 +607,14 @@ export const getUpdateLeaderMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateLeader>>,
     TError,
-    { id: number; data: BodyType<UpdateLeaderRequest> },
+    { id: string; data: BodyType<UpdateLeaderRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateLeader>>,
   TError,
-  { id: number; data: BodyType<UpdateLeaderRequest> },
+  { id: string; data: BodyType<UpdateLeaderRequest> },
   TContext
 > => {
   const mutationKey = ["updateLeader"];
@@ -628,7 +628,7 @@ export const getUpdateLeaderMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateLeader>>,
-    { id: number; data: BodyType<UpdateLeaderRequest> }
+    { id: string; data: BodyType<UpdateLeaderRequest> }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -654,14 +654,14 @@ export const useUpdateLeader = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateLeader>>,
     TError,
-    { id: number; data: BodyType<UpdateLeaderRequest> },
+    { id: string; data: BodyType<UpdateLeaderRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof updateLeader>>,
   TError,
-  { id: number; data: BodyType<UpdateLeaderRequest> },
+  { id: string; data: BodyType<UpdateLeaderRequest> },
   TContext
 > => {
   return useMutation(getUpdateLeaderMutationOptions(options));
@@ -670,12 +670,12 @@ export const useUpdateLeader = <
 /**
  * @summary Delete a leader (super admin only)
  */
-export const getDeleteLeaderUrl = (id: number) => {
+export const getDeleteLeaderUrl = (id: string) => {
   return `/api/samaj/leaders/${id}`;
 };
 
 export const deleteLeader = async (
-  id: number,
+  id: string,
   options?: RequestInit,
 ): Promise<SuccessResponse> => {
   return customFetch<SuccessResponse>(getDeleteLeaderUrl(id), {
@@ -691,14 +691,14 @@ export const getDeleteLeaderMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteLeader>>,
     TError,
-    { id: number },
+    { id: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteLeader>>,
   TError,
-  { id: number },
+  { id: string },
   TContext
 > => {
   const mutationKey = ["deleteLeader"];
@@ -712,7 +712,7 @@ export const getDeleteLeaderMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteLeader>>,
-    { id: number }
+    { id: string }
   > = (props) => {
     const { id } = props ?? {};
 
@@ -738,14 +738,14 @@ export const useDeleteLeader = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteLeader>>,
     TError,
-    { id: number },
+    { id: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof deleteLeader>>,
   TError,
-  { id: number },
+  { id: string },
   TContext
 > => {
   return useMutation(getDeleteLeaderMutationOptions(options));
@@ -754,12 +754,12 @@ export const useDeleteLeader = <
 /**
  * @summary Move leader up or down (super admin only)
  */
-export const getMoveLeaderUrl = (id: number) => {
+export const getMoveLeaderUrl = (id: string) => {
   return `/api/samaj/leaders/${id}/move`;
 };
 
 export const moveLeader = async (
-  id: number,
+  id: string,
   moveLeaderRequest: MoveLeaderRequest,
   options?: RequestInit,
 ): Promise<SuccessResponse> => {
@@ -778,14 +778,14 @@ export const getMoveLeaderMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof moveLeader>>,
     TError,
-    { id: number; data: BodyType<MoveLeaderRequest> },
+    { id: string; data: BodyType<MoveLeaderRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof moveLeader>>,
   TError,
-  { id: number; data: BodyType<MoveLeaderRequest> },
+  { id: string; data: BodyType<MoveLeaderRequest> },
   TContext
 > => {
   const mutationKey = ["moveLeader"];
@@ -799,7 +799,7 @@ export const getMoveLeaderMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof moveLeader>>,
-    { id: number; data: BodyType<MoveLeaderRequest> }
+    { id: string; data: BodyType<MoveLeaderRequest> }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -825,14 +825,14 @@ export const useMoveLeader = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof moveLeader>>,
     TError,
-    { id: number; data: BodyType<MoveLeaderRequest> },
+    { id: string; data: BodyType<MoveLeaderRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof moveLeader>>,
   TError,
-  { id: number; data: BodyType<MoveLeaderRequest> },
+  { id: string; data: BodyType<MoveLeaderRequest> },
   TContext
 > => {
   return useMutation(getMoveLeaderMutationOptions(options));
@@ -992,12 +992,12 @@ export const useCreateHome = <
 /**
  * @summary Get a specific home
  */
-export const getGetHomeUrl = (id: number) => {
+export const getGetHomeUrl = (id: string) => {
   return `/api/homes/${id}`;
 };
 
 export const getHome = async (
-  id: number,
+  id: string,
   options?: RequestInit,
 ): Promise<Home> => {
   return customFetch<Home>(getGetHomeUrl(id), {
@@ -1006,7 +1006,7 @@ export const getHome = async (
   });
 };
 
-export const getGetHomeQueryKey = (id: number) => {
+export const getGetHomeQueryKey = (id: string) => {
   return [`/api/homes/${id}`] as const;
 };
 
@@ -1014,7 +1014,7 @@ export const getGetHomeQueryOptions = <
   TData = Awaited<ReturnType<typeof getHome>>,
   TError = ErrorType<ErrorResponse>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: UseQueryOptions<Awaited<ReturnType<typeof getHome>>, TError, TData>;
     request?: SecondParameter<typeof customFetch>;
@@ -1051,7 +1051,7 @@ export function useGetHome<
   TData = Awaited<ReturnType<typeof getHome>>,
   TError = ErrorType<ErrorResponse>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: UseQueryOptions<Awaited<ReturnType<typeof getHome>>, TError, TData>;
     request?: SecondParameter<typeof customFetch>;
@@ -1069,12 +1069,12 @@ export function useGetHome<
 /**
  * @summary Update home details (super admin only)
  */
-export const getUpdateHomeUrl = (id: number) => {
+export const getUpdateHomeUrl = (id: string) => {
   return `/api/homes/${id}`;
 };
 
 export const updateHome = async (
-  id: number,
+  id: string,
   updateHomeRequest: UpdateHomeRequest,
   options?: RequestInit,
 ): Promise<Home> => {
@@ -1093,14 +1093,14 @@ export const getUpdateHomeMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateHome>>,
     TError,
-    { id: number; data: BodyType<UpdateHomeRequest> },
+    { id: string; data: BodyType<UpdateHomeRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateHome>>,
   TError,
-  { id: number; data: BodyType<UpdateHomeRequest> },
+  { id: string; data: BodyType<UpdateHomeRequest> },
   TContext
 > => {
   const mutationKey = ["updateHome"];
@@ -1114,7 +1114,7 @@ export const getUpdateHomeMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateHome>>,
-    { id: number; data: BodyType<UpdateHomeRequest> }
+    { id: string; data: BodyType<UpdateHomeRequest> }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -1140,14 +1140,14 @@ export const useUpdateHome = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateHome>>,
     TError,
-    { id: number; data: BodyType<UpdateHomeRequest> },
+    { id: string; data: BodyType<UpdateHomeRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof updateHome>>,
   TError,
-  { id: number; data: BodyType<UpdateHomeRequest> },
+  { id: string; data: BodyType<UpdateHomeRequest> },
   TContext
 > => {
   return useMutation(getUpdateHomeMutationOptions(options));
@@ -1156,12 +1156,12 @@ export const useUpdateHome = <
 /**
  * @summary Delete an entire home and all its members (super admin only)
  */
-export const getDeleteHomeUrl = (id: number) => {
+export const getDeleteHomeUrl = (id: string) => {
   return `/api/homes/${id}`;
 };
 
 export const deleteHome = async (
-  id: number,
+  id: string,
   options?: RequestInit,
 ): Promise<SuccessResponse> => {
   return customFetch<SuccessResponse>(getDeleteHomeUrl(id), {
@@ -1177,14 +1177,14 @@ export const getDeleteHomeMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteHome>>,
     TError,
-    { id: number },
+    { id: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteHome>>,
   TError,
-  { id: number },
+  { id: string },
   TContext
 > => {
   const mutationKey = ["deleteHome"];
@@ -1198,7 +1198,7 @@ export const getDeleteHomeMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteHome>>,
-    { id: number }
+    { id: string }
   > = (props) => {
     const { id } = props ?? {};
 
@@ -1224,14 +1224,14 @@ export const useDeleteHome = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteHome>>,
     TError,
-    { id: number },
+    { id: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof deleteHome>>,
   TError,
-  { id: number },
+  { id: string },
   TContext
 > => {
   return useMutation(getDeleteHomeMutationOptions(options));
@@ -1240,12 +1240,12 @@ export const useDeleteHome = <
 /**
  * @summary Add a member to an existing home (home admin only)
  */
-export const getAddMemberUrl = (id: number) => {
+export const getAddMemberUrl = (id: string) => {
   return `/api/homes/${id}/members`;
 };
 
 export const addMember = async (
-  id: number,
+  id: string,
   createMemberRequest: CreateMemberRequest,
   options?: RequestInit,
 ): Promise<Member> => {
@@ -1264,14 +1264,14 @@ export const getAddMemberMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof addMember>>,
     TError,
-    { id: number; data: BodyType<CreateMemberRequest> },
+    { id: string; data: BodyType<CreateMemberRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof addMember>>,
   TError,
-  { id: number; data: BodyType<CreateMemberRequest> },
+  { id: string; data: BodyType<CreateMemberRequest> },
   TContext
 > => {
   const mutationKey = ["addMember"];
@@ -1285,7 +1285,7 @@ export const getAddMemberMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof addMember>>,
-    { id: number; data: BodyType<CreateMemberRequest> }
+    { id: string; data: BodyType<CreateMemberRequest> }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -1311,14 +1311,14 @@ export const useAddMember = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof addMember>>,
     TError,
-    { id: number; data: BodyType<CreateMemberRequest> },
+    { id: string; data: BodyType<CreateMemberRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof addMember>>,
   TError,
-  { id: number; data: BodyType<CreateMemberRequest> },
+  { id: string; data: BodyType<CreateMemberRequest> },
   TContext
 > => {
   return useMutation(getAddMemberMutationOptions(options));
@@ -1327,13 +1327,13 @@ export const useAddMember = <
 /**
  * @summary Update a member's details (super admin only)
  */
-export const getUpdateMemberUrl = (id: number, memberId: number) => {
+export const getUpdateMemberUrl = (id: string, memberId: string) => {
   return `/api/homes/${id}/members/${memberId}`;
 };
 
 export const updateMember = async (
-  id: number,
-  memberId: number,
+  id: string,
+  memberId: string,
   updateMemberRequest: UpdateMemberRequest,
   options?: RequestInit,
 ): Promise<Member> => {
@@ -1352,14 +1352,14 @@ export const getUpdateMemberMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateMember>>,
     TError,
-    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+    { id: string; memberId: string; data: BodyType<UpdateMemberRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateMember>>,
   TError,
-  { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+  { id: string; memberId: string; data: BodyType<UpdateMemberRequest> },
   TContext
 > => {
   const mutationKey = ["updateMember"];
@@ -1373,7 +1373,7 @@ export const getUpdateMemberMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateMember>>,
-    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> }
+    { id: string; memberId: string; data: BodyType<UpdateMemberRequest> }
   > = (props) => {
     const { id, memberId, data } = props ?? {};
 
@@ -1399,14 +1399,14 @@ export const useUpdateMember = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateMember>>,
     TError,
-    { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+    { id: string; memberId: string; data: BodyType<UpdateMemberRequest> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof updateMember>>,
   TError,
-  { id: number; memberId: number; data: BodyType<UpdateMemberRequest> },
+  { id: string; memberId: string; data: BodyType<UpdateMemberRequest> },
   TContext
 > => {
   return useMutation(getUpdateMemberMutationOptions(options));
@@ -1415,13 +1415,13 @@ export const useUpdateMember = <
 /**
  * @summary Delete a single member from a home (super admin only)
  */
-export const getDeleteMemberUrl = (id: number, memberId: number) => {
+export const getDeleteMemberUrl = (id: string, memberId: string) => {
   return `/api/homes/${id}/members/${memberId}`;
 };
 
 export const deleteMember = async (
-  id: number,
-  memberId: number,
+  id: string,
+  memberId: string,
   options?: RequestInit,
 ): Promise<SuccessResponse> => {
   return customFetch<SuccessResponse>(getDeleteMemberUrl(id, memberId), {
@@ -1437,14 +1437,14 @@ export const getDeleteMemberMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteMember>>,
     TError,
-    { id: number; memberId: number },
+    { id: string; memberId: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteMember>>,
   TError,
-  { id: number; memberId: number },
+  { id: string; memberId: string },
   TContext
 > => {
   const mutationKey = ["deleteMember"];
@@ -1458,7 +1458,7 @@ export const getDeleteMemberMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteMember>>,
-    { id: number; memberId: number }
+    { id: string; memberId: string }
   > = (props) => {
     const { id, memberId } = props ?? {};
 
@@ -1484,14 +1484,14 @@ export const useDeleteMember = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteMember>>,
     TError,
-    { id: number; memberId: number },
+    { id: string; memberId: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof deleteMember>>,
   TError,
-  { id: number; memberId: number },
+  { id: string; memberId: string },
   TContext
 > => {
   return useMutation(getDeleteMemberMutationOptions(options));

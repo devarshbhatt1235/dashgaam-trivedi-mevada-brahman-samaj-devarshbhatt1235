@@ -31,7 +31,7 @@ export const UserInfoRole = {
 } as const;
 
 export interface UserInfo {
-  id: number;
+  id: string;
   username: string;
   role: UserInfoRole;
 }
@@ -42,7 +42,7 @@ export interface LoginResponse {
 }
 
 export interface Samaj {
-  id: number;
+  id: string;
   samaj_name: string;
 }
 
@@ -51,11 +51,11 @@ export interface UpdateSamajRequest {
 }
 
 export interface Leader {
-  id: number;
+  id: string;
   name: string;
   role: string;
-  mobile?: string;
-  address?: string;
+  mobile?: string | null;
+  address?: string | null;
   order: number;
 }
 
@@ -93,18 +93,23 @@ export type MemberMaritalStatus =
 export const MemberMaritalStatus = {
   married: "married",
   unmarried: "unmarried",
+  vidhur: "vidhur",
+  vidhva: "vidhva",
+  chhutachheda: "chhutachheda",
 } as const;
 
 export interface Member {
-  id: number;
+  id: string;
   sr_no: number;
   name: string;
-  dob?: string;
-  occupation?: string;
+  dob?: string | null;
+  occupation?: string | null;
   relation: string;
   marital_status: MemberMaritalStatus;
-  mobile?: string;
-  home_id: number;
+  mobile?: string | null;
+  education?: string | null;
+  qualification?: string | null;
+  home_id: string;
 }
 
 export type CreateMemberRequestMaritalStatus =
@@ -113,6 +118,9 @@ export type CreateMemberRequestMaritalStatus =
 export const CreateMemberRequestMaritalStatus = {
   married: "married",
   unmarried: "unmarried",
+  vidhur: "vidhur",
+  vidhva: "vidhva",
+  chhutachheda: "chhutachheda",
 } as const;
 
 export interface CreateMemberRequest {
@@ -123,6 +131,8 @@ export interface CreateMemberRequest {
   relation: string;
   marital_status: CreateMemberRequestMaritalStatus;
   mobile?: string;
+  education?: string;
+  qualification?: string;
 }
 
 export interface Address {
@@ -132,18 +142,27 @@ export interface Address {
 }
 
 export interface CurrentAddress {
-  current_house_no?: string;
-  current_area?: string;
-  current_landmark?: string;
-  current_city?: string;
-  current_district?: string;
-  current_pincode?: string;
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
 }
 
 export interface Home {
-  id: number;
+  id: string;
   kutumb_vada_name: string;
   kutumb_vada_address: string;
+  house_no?: string;
+  faliya?: string;
+  village?: string;
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
   address: Address;
   current_address?: CurrentAddress;
   members?: Member[];
@@ -184,6 +203,9 @@ export type UpdateMemberRequestMaritalStatus =
 export const UpdateMemberRequestMaritalStatus = {
   married: "married",
   unmarried: "unmarried",
+  vidhur: "vidhur",
+  vidhva: "vidhva",
+  chhutachheda: "chhutachheda",
 } as const;
 
 export interface UpdateMemberRequest {
@@ -194,4 +216,6 @@ export interface UpdateMemberRequest {
   relation?: string;
   marital_status?: UpdateMemberRequestMaritalStatus;
   mobile?: string;
+  education?: string;
+  qualification?: string;
 }

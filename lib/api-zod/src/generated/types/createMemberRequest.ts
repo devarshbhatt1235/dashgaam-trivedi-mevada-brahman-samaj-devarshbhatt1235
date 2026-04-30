@@ -15,4 +15,6 @@ export interface CreateMemberRequest {
   relation: string;
   marital_status: CreateMemberRequestMaritalStatus;
   mobile?: string;
+  education?: string;
+  qualification?: string;
 }

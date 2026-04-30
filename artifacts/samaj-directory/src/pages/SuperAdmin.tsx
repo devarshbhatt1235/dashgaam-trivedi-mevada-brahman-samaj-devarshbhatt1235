@@ -40,19 +40,33 @@ function MaritalBadge({ status }: { status: string }) {
 }
 
 type Leader = {
-  id: number; name: string; role: string;
-  mobile?: string; address?: string; order: number;
+  id: string; name: string; role: string;
+  mobile?: string | null; address?: string | null; order: number;
 };
 type Member = {
-  id: number; sr_no: number; name: string; dob?: string;
-  occupation?: string; relation: string; marital_status: string;
-  mobile?: string; home_id: number;
+  id: string; sr_no: number; name: string; dob?: string | null;
+  occupation?: string | null; relation: string; marital_status: string;
+  mobile?: string | null; education?: string | null; qualification?: string | null;
+  home_id: string;
 };
 type HomeType = {
-  id: number; kutumb_vada_name: string; kutumb_vada_address: string;
+  id: string; kutumb_vada_name: string; kutumb_vada_address: string;
   address: { house_no: string; faliya: string; village: string };
+  current_house_no?: string | null;
+  current_area?: string | null;
+  current_landmark?: string | null;
+  current_city?: string | null;
+  current_district?: string | null;
+  current_pincode?: string | null;
   members?: Member[];
 };
+
+function buildHalSarnamu(home: HomeType): string {
+  return [
+    home.current_house_no, home.current_area, home.current_landmark,
+    home.current_city, home.current_district, home.current_pincode,
+  ].filter(Boolean).join(", ");
+}
 
 function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: () => void; onSaved: () => void }) {
   const { toast } = useToast();
@@ -62,29 +76,51 @@ function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: ()
     house_no: home.address.house_no,
     faliya: home.address.faliya,
     village: home.address.village,
+    current_house_no: home.current_house_no || "",
+    current_area: home.current_area || "",
+    current_landmark: home.current_landmark || "",
+    current_city: home.current_city || "",
+    current_district: home.current_district || "",
+    current_pincode: home.current_pincode || "",
   });
   const updateHome = useUpdateHome({ mutation: { onSuccess: () => { toast({ title: "સફળ", description: "ઘરની માહિતી સુધારાઈ." }); onSaved(); onClose(); } } });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-secondary">ઘરની માહિતી સુધારો</h3>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100"><X className="w-5 h-5" /></button>
         </div>
-        <div className="space-y-3">
-          {[
-            { label: "કુટુંબ વડા નામ", key: "kutumb_vada_name" },
-            { label: "કુટુંબ વડા સરનામું", key: "kutumb_vada_address" },
-            { label: "ઘર નંબર", key: "house_no" },
-            { label: "ફળિયા", key: "faliya" },
-            { label: "ગામ", key: "village" },
-          ].map(({ label, key }) => (
-            <div key={key}>
-              <Label>{label}</Label>
-              <Input value={(form as any)[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} />
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-sm font-semibold text-primary uppercase mb-2">કુટુંબ વડા</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div><Label>કુટુંબ વડા નામ</Label><Input value={form.kutumb_vada_name} onChange={e => setForm({ ...form, kutumb_vada_name: e.target.value })} /></div>
+              <div><Label>કુટુંબ વડા સરનામું</Label><Input value={form.kutumb_vada_address} onChange={e => setForm({ ...form, kutumb_vada_address: e.target.value })} /></div>
             </div>
-          ))}
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold text-primary uppercase mb-2">ઘર નું સરનામું</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div><Label>ઘર નંબર</Label><Input value={form.house_no} onChange={e => setForm({ ...form, house_no: e.target.value })} /></div>
+              <div><Label>ફળિયા</Label><Input value={form.faliya} onChange={e => setForm({ ...form, faliya: e.target.value })} /></div>
+              <div className="sm:col-span-2"><Label>ગામ</Label><Input value={form.village} onChange={e => setForm({ ...form, village: e.target.value })} /></div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold text-primary uppercase mb-2">હાલ નું સરનામું</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div><Label>ઘર નંબર</Label><Input value={form.current_house_no} onChange={e => setForm({ ...form, current_house_no: e.target.value })} /></div>
+              <div><Label>એરિયા</Label><Input value={form.current_area} onChange={e => setForm({ ...form, current_area: e.target.value })} /></div>
+              <div className="sm:col-span-2"><Label>નજીકનું સ્થળ <span className="text-muted-foreground text-xs">(વૈકલ્પિક)</span></Label><Input value={form.current_landmark} onChange={e => setForm({ ...form, current_landmark: e.target.value })} /></div>
+              <div><Label>શહેર</Label><Input value={form.current_city} onChange={e => setForm({ ...form, current_city: e.target.value })} /></div>
+              <div><Label>જિલ્લો</Label><Input value={form.current_district} onChange={e => setForm({ ...form, current_district: e.target.value })} /></div>
+              <div className="sm:col-span-2"><Label>પિન કોડ</Label><Input value={form.current_pincode} onChange={e => setForm({ ...form, current_pincode: e.target.value })} /></div>
+            </div>
+          </div>
         </div>
         <div className="flex gap-3 mt-5">
           <Button onClick={() => updateHome.mutate({ id: home.id, data: form })} disabled={updateHome.isPending} className="flex-1">
@@ -97,7 +133,7 @@ function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: ()
   );
 }
 
-function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member; homeId: number; onClose: () => void; onSaved: () => void }) {
+function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member; homeId: string; onClose: () => void; onSaved: () => void }) {
   const { toast } = useToast();
   const [form, setForm] = useState({
     sr_no: member.sr_no,
@@ -107,6 +143,8 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
     relation: member.relation,
     marital_status: member.marital_status,
     mobile: member.mobile || "",
+    education: member.education || "",
+    qualification: member.qualification || "",
   });
   const updateMember = useUpdateMember({ mutation: { onSuccess: () => { toast({ title: "સફળ", description: "સભ્યની માહિતી સુધારાઈ." }); onSaved(); onClose(); } } });
 
@@ -151,6 +189,14 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
           <div>
             <Label>વ્યવસાય</Label>
             <Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} />
+          </div>
+          <div>
+            <Label>અભ્યાસ</Label>
+            <Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ" />
+          </div>
+          <div>
+            <Label>લાયકાત</Label>
+            <Input value={form.qualification} onChange={e => setForm({ ...form, qualification: e.target.value })} placeholder="દા.ત. B.Com, ITI" />
           </div>
           <div>
             <Label>મોબાઇલ નંબર</Label>
@@ -209,6 +255,7 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
 
   const sortedMembers = home.members?.slice().sort((a, b) => a.sr_no - b.sr_no) || [];
   const firstMember = sortedMembers[0];
+  const halSarnamu = buildHalSarnamu(home);
 
   return (
     <>
@@ -271,6 +318,8 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                       <th className="px-3 py-2">સંબંધ</th>
                       <th className="px-3 py-2">જન્મ તારીખ</th>
                       <th className="px-3 py-2">વ્યવસાય</th>
+                      <th className="px-3 py-2">અભ્યાસ</th>
+                      <th className="px-3 py-2">લાયકાત</th>
                       <th className="px-3 py-2">લગ્ન</th>
                       <th className="px-3 py-2">મોબાઇલ</th>
                       <th className="px-3 py-2 text-right">ક્રિયા</th>
@@ -284,6 +333,8 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                         <td className="px-3 py-2">{member.relation}</td>
                         <td className="px-3 py-2">{member.dob || "—"}</td>
                         <td className="px-3 py-2">{member.occupation || "—"}</td>
+                        <td className="px-3 py-2">{member.education || "—"}</td>
+                        <td className="px-3 py-2">{member.qualification || "—"}</td>
                         <td className="px-3 py-2">
                           <MaritalBadge status={member.marital_status} />
                         </td>
@@ -305,6 +356,14 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
               </div>
             ) : (
               <p className="text-center text-muted-foreground py-4 text-sm">આ ઘરમાં કોઈ સભ્ય નથી</p>
+            )}
+
+            {/* Hal nu sarnamu */}
+            {halSarnamu && (
+              <div className="rounded-lg border border-orange-200 bg-orange-50/40 p-3">
+                <p className="text-xs font-bold text-secondary mb-2">હાલ નું સરનામું</p>
+                <p className="text-sm font-medium">{halSarnamu}</p>
+              </div>
             )}
 
             {/* Kutumb Vada Details below members */}
@@ -376,15 +435,17 @@ export default function SuperAdmin() {
   if (authLoading) return null;
   if (!user || user.role !== "super_admin") return <Redirect href="/login" />;
 
-  const filteredHomes = homes?.filter(h => {
+  const filteredHomes = (homes as HomeType[] | undefined)?.filter(h => {
     const term = homeSearch.toLowerCase();
     const firstMember = h.members?.slice().sort((a, b) => a.sr_no - b.sr_no)[0];
+    const halSarnamu = buildHalSarnamu(h).toLowerCase();
     return (
       h.kutumb_vada_name.toLowerCase().includes(term) ||
       h.address.village.toLowerCase().includes(term) ||
       h.address.faliya.toLowerCase().includes(term) ||
       (firstMember?.name || "").toLowerCase().includes(term) ||
-      h.members?.some(m => m.name.toLowerCase().includes(term))
+      h.members?.some(m => m.name.toLowerCase().includes(term)) ||
+      halSarnamu.includes(term)
     );
   }) || [];
 
@@ -452,7 +513,7 @@ export default function SuperAdmin() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {leaders?.map((leader, i) => (
+              {(leaders as Leader[] | undefined)?.map((leader, i) => (
                 <tr key={leader.id} className="hover:bg-orange-50/30">
                   <td className="px-4 py-3 font-mono font-medium">{leader.order}</td>
                   <td className="px-4 py-3 font-bold">{leader.name}</td>
@@ -496,7 +557,7 @@ export default function SuperAdmin() {
         </div>
 
         <Input
-          placeholder="નામ, કુટુંબ વડા, ફળિયા, ગામ..."
+          placeholder="નામ, ગામ, ફળિયા, હાલનું સરનામું..."
           value={homeSearch}
           onChange={e => setHomeSearch(e.target.value)}
           className="mb-4 max-w-sm"
