@@ -9,6 +9,7 @@ import {
   useGetHomes,
   useUpdateHome,
   useDeleteHome,
+  useAddMember,
   useUpdateMember,
   useDeleteMember,
 } from "@workspace/api-client-react";
@@ -51,6 +52,7 @@ type Member = {
 };
 type HomeType = {
   id: string; kutumb_vada_name: string; kutumb_vada_address: string;
+  kutumb_vada_mobile?: string | null;
   address: { house_no: string; faliya: string; village: string };
   current_house_no?: string | null;
   current_area?: string | null;
@@ -68,11 +70,79 @@ function buildHalSarnamu(home: HomeType): string {
   ].filter(Boolean).join(", ");
 }
 
+function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: string; memberCount: number; onClose: () => void; onSaved: () => void }) {
+  const { toast } = useToast();
+  const [form, setForm] = useState({
+    sr_no: memberCount + 1,
+    name: "",
+    relation: "",
+    marital_status: "married",
+    dob: "",
+    occupation: "",
+    education: "",
+    qualification: "",
+    mobile: "",
+  });
+  const addMember = useAddMember({
+    mutation: {
+      onSuccess: () => {
+        toast({ title: "સફળ", description: "નવો સભ્ય ઉમેરાયો." });
+        onSaved();
+        onClose();
+      },
+      onError: () => toast({ variant: "destructive", title: "ભૂલ", description: "સભ્ય ઉમેરવામાં નિષ્ફળ." }),
+    }
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-secondary">નવો સભ્ય ઉમેરો</h3>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="space-y-3">
+          <div><Label>ક્રમ</Label><Input type="number" value={form.sr_no} onChange={e => setForm({ ...form, sr_no: parseInt(e.target.value) || 1 })} /></div>
+          <div><Label>નામ *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="સભ્યનું નામ" /></div>
+          <div><Label>સંબંધ *</Label><Input value={form.relation} onChange={e => setForm({ ...form, relation: e.target.value })} placeholder="દા.ત. પુત્ર, પત્ની" /></div>
+          <div>
+            <Label>લગ્ન સ્થિતિ</Label>
+            <select value={form.marital_status} onChange={e => setForm({ ...form, marital_status: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="married">વિવાહિત</option>
+              <option value="unmarried">અવિવાહિત</option>
+              <option value="vidhur">વિધુર</option>
+              <option value="vidhva">વિધવા</option>
+              <option value="chhutachheda">છૂટાછેડા</option>
+            </select>
+          </div>
+          <div><Label>જન્મ તારીખ</Label><Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="YYYY-MM-DD" /></div>
+          <div><Label>વ્યવસાય</Label><Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} /></div>
+          <div><Label>અભ્યાસ</Label><Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ" /></div>
+          <div><Label>લાયકાત</Label><Input value={form.qualification} onChange={e => setForm({ ...form, qualification: e.target.value })} placeholder="દા.ત. B.Com, ITI" /></div>
+          <div><Label>મોબાઇલ નંબર</Label><Input value={form.mobile} onChange={e => setForm({ ...form, mobile: e.target.value })} /></div>
+        </div>
+        <div className="flex gap-3 mt-5">
+          <Button
+            onClick={() => addMember.mutate({ id: homeId, data: { ...form, dob: form.dob || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } })}
+            disabled={addMember.isPending || !form.name || !form.relation}
+            className="flex-1"
+          >
+            <Plus className="w-4 h-4 mr-2" /> ઉમેરો
+          </Button>
+          <Button variant="outline" onClick={onClose} className="flex-1">રદ કરો</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: () => void; onSaved: () => void }) {
   const { toast } = useToast();
   const [form, setForm] = useState({
     kutumb_vada_name: home.kutumb_vada_name,
     kutumb_vada_address: home.kutumb_vada_address,
+    kutumb_vada_mobile: home.kutumb_vada_mobile || "",
     house_no: home.address.house_no,
     faliya: home.address.faliya,
     village: home.address.village,
@@ -98,6 +168,7 @@ function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: ()
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div><Label>કુટુંબ વડા નામ</Label><Input value={form.kutumb_vada_name} onChange={e => setForm({ ...form, kutumb_vada_name: e.target.value })} /></div>
               <div><Label>કુટુંબ વડા સરનામું</Label><Input value={form.kutumb_vada_address} onChange={e => setForm({ ...form, kutumb_vada_address: e.target.value })} /></div>
+              <div className="sm:col-span-2"><Label>કુટુંબ વડા મોબાઇલ નંબર</Label><Input value={form.kutumb_vada_mobile} onChange={e => setForm({ ...form, kutumb_vada_mobile: e.target.value })} placeholder="મોબાઇલ નંબર" /></div>
             </div>
           </div>
 
@@ -220,6 +291,7 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
   const [expanded, setExpanded] = useState(false);
   const [editingHome, setEditingHome] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [addingMember, setAddingMember] = useState(false);
 
   const deleteHome = useDeleteHome({
     mutation: {
@@ -274,6 +346,14 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
           onSaved={() => { queryClient.invalidateQueries({ queryKey: ["/api/homes"] }); onRefresh(); }}
         />
       )}
+      {addingMember && (
+        <AddMemberModal
+          homeId={home.id}
+          memberCount={home.members?.length || 0}
+          onClose={() => setAddingMember(false)}
+          onSaved={() => { queryClient.invalidateQueries({ queryKey: ["/api/homes"] }); onRefresh(); }}
+        />
+      )}
 
       <div className="border border-border rounded-xl overflow-hidden">
         {/* Card Header */}
@@ -289,10 +369,13 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-2 flex-wrap" onClick={e => e.stopPropagation()}>
             <span className="text-xs text-muted-foreground bg-white rounded-full px-2 py-1 border">
               <Users className="w-3 h-3 inline mr-1" />{home.members?.length || 0} સભ્ય
             </span>
+            <Button variant="outline" size="sm" className="px-2 text-green-700 border-green-300 hover:bg-green-50" onClick={() => { setExpanded(true); setAddingMember(true); }}>
+              <Plus className="w-3.5 h-3.5 mr-1" /> સભ્ય ઉમેરો
+            </Button>
             <Button variant="outline" size="sm" className="px-2" onClick={() => setEditingHome(true)}>
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -372,6 +455,9 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                 <div><span className="text-muted-foreground">કુટુંબ વડા નામ: </span><span className="font-medium">{home.kutumb_vada_name}</span></div>
                 <div><span className="text-muted-foreground">કુટુંબ વડા સરનામું: </span><span className="font-medium">{home.kutumb_vada_address}</span></div>
+                {home.kutumb_vada_mobile && (
+                  <div><span className="text-muted-foreground">કુટુંબ વડા મોબાઇલ: </span><span className="font-medium">{home.kutumb_vada_mobile}</span></div>
+                )}
               </div>
             </div>
           </div>

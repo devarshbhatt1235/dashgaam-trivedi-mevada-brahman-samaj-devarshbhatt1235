@@ -211,6 +211,12 @@ export default function Directory() {
                                 <span className="text-muted-foreground">કુટુંબ વડા સરનામું: </span>
                                 <span className="font-medium">{home.kutumb_vada_address}</span>
                               </div>
+                              {(home as any).kutumb_vada_mobile && (
+                                <div>
+                                  <span className="text-muted-foreground">કુટુંબ વડા મોબાઇલ: </span>
+                                  <span className="font-medium">{(home as any).kutumb_vada_mobile}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

@@ -154,6 +154,7 @@ export interface Home {
   id: string;
   kutumb_vada_name: string;
   kutumb_vada_address: string;
+  kutumb_vada_mobile?: string | null;
   house_no?: string;
   faliya?: string;
   village?: string;
@@ -171,6 +172,7 @@ export interface Home {
 export interface CreateHomeRequest {
   kutumb_vada_name: string;
   kutumb_vada_address: string;
+  kutumb_vada_mobile?: string;
   house_no: string;
   faliya: string;
   village: string;
@@ -186,6 +188,7 @@ export interface CreateHomeRequest {
 export interface UpdateHomeRequest {
   kutumb_vada_name?: string;
   kutumb_vada_address?: string;
+  kutumb_vada_mobile?: string;
   house_no?: string;
   faliya?: string;
   village?: string;

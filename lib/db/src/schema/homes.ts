@@ -20,6 +20,7 @@ export type EmbeddedMember = InferSchemaType<typeof memberSchema> & {
 const homeSchema = new Schema({
   kutumb_vada_name: { type: String, required: true },
   kutumb_vada_address: { type: String, required: true },
+  kutumb_vada_mobile: { type: String, default: null },
   // Ghar nu sarnamu
   house_no: { type: String, required: true },
   faliya: { type: String, required: true },
@@ -57,6 +58,7 @@ export type Home = {
   id: string;
   kutumb_vada_name: string;
   kutumb_vada_address: string;
+  kutumb_vada_mobile?: string | null;
   house_no: string;
   faliya: string;
   village: string;

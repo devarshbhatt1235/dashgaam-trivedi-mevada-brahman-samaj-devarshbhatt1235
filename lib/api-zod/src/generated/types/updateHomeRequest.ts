@@ -9,6 +9,7 @@
 export interface UpdateHomeRequest {
   kutumb_vada_name?: string;
   kutumb_vada_address?: string;
+  kutumb_vada_mobile?: string;
   house_no?: string;
   faliya?: string;
   village?: string;

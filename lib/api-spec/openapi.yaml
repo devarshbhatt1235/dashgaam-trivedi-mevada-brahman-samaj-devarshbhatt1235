@@ -753,6 +753,9 @@ components:
           type: string
         kutumb_vada_address:
           type: string
+        kutumb_vada_mobile:
+          type: string
+          nullable: true
         house_no:
           type: string
         faliya:
@@ -798,6 +801,8 @@ components:
           type: string
         kutumb_vada_address:
           type: string
+        kutumb_vada_mobile:
+          type: string
         house_no:
           type: string
         faliya:
@@ -833,6 +838,8 @@ components:
         kutumb_vada_name:
           type: string
         kutumb_vada_address:
+          type: string
+        kutumb_vada_mobile:
           type: string
         house_no:
           type: string

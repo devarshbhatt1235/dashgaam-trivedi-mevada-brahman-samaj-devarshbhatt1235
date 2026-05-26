@@ -26,6 +26,7 @@ function serializeHome(doc: HomeDoc) {
     id,
     kutumb_vada_name: doc.kutumb_vada_name,
     kutumb_vada_address: doc.kutumb_vada_address,
+    kutumb_vada_mobile: (doc as any).kutumb_vada_mobile ?? null,
     house_no: doc.house_no,
     faliya: doc.faliya,
     village: doc.village,
@@ -68,7 +69,7 @@ router.get("/", async (req, res) => {
 router.post("/", requireAuth, requireRole("home_admin"), async (req, res) => {
   try {
     const {
-      kutumb_vada_name, kutumb_vada_address, house_no, faliya, village, members,
+      kutumb_vada_name, kutumb_vada_address, kutumb_vada_mobile, house_no, faliya, village, members,
       current_house_no, current_area, current_landmark, current_city, current_district, current_pincode,
     } = req.body;
 
@@ -94,6 +95,7 @@ router.post("/", requireAuth, requireRole("home_admin"), async (req, res) => {
     const home = await HomeModel.create({
       kutumb_vada_name,
       kutumb_vada_address,
+      kutumb_vada_mobile: kutumb_vada_mobile || null,
       house_no,
       faliya,
       village,
@@ -136,7 +138,7 @@ router.put("/:id", requireAuth, requireRole("super_admin"), async (req, res) => 
     }
 
     const fields = [
-      "kutumb_vada_name", "kutumb_vada_address",
+      "kutumb_vada_name", "kutumb_vada_address", "kutumb_vada_mobile",
       "house_no", "faliya", "village",
       "current_house_no", "current_area", "current_landmark",
       "current_city", "current_district", "current_pincode",
@@ -168,7 +170,7 @@ router.delete("/:id", requireAuth, requireRole("super_admin"), async (req, res) 
   }
 });
 
-router.post("/:id/members", requireAuth, requireRole("home_admin"), async (req, res) => {
+router.post("/:id/members", requireAuth, requireRole("home_admin", "super_admin"), async (req, res) => {
   try {
     const home = await HomeModel.findById(req.params.id);
     if (!home) {

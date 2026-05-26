@@ -23,6 +23,7 @@ const memberSchema = z.object({
 const formSchema = z.object({
   kutumb_vada_name: z.string().min(1, "કુટુંબ વડાનું નામ જરૂરી છે"),
   kutumb_vada_address: z.string().min(1, "સરનામું જરૂરી છે"),
+  kutumb_vada_mobile: z.string().optional(),
   house_no: z.string().min(1, "ઘર નંબર જરૂરી છે"),
   faliya: z.string().min(1, "ફળિયા જરૂરી છે"),
   village: z.string().min(1, "ગામ જરૂરી છે"),
@@ -58,6 +59,7 @@ export default function HomeAdmin() {
     defaultValues: {
       kutumb_vada_name: "",
       kutumb_vada_address: "",
+      kutumb_vada_mobile: "",
       house_no: "",
       faliya: "",
       village: "",
@@ -116,6 +118,10 @@ export default function HomeAdmin() {
                 {form.formState.errors.kutumb_vada_address && (
                   <p className="text-sm text-red-500">{form.formState.errors.kutumb_vada_address.message}</p>
                 )}
+              </div>
+              <div className="space-y-2">
+                <Label>કુટુંબ વડા મોબાઇલ નંબર</Label>
+                <Input {...form.register("kutumb_vada_mobile")} placeholder="મોબાઇલ નંબર" />
               </div>
             </div>
           </div>
