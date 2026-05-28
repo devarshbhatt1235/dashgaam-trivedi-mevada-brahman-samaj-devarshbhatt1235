@@ -23,6 +23,34 @@ import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
+
+function formatDob(dob: string | null | undefined): string {
+  if (!dob) return "—";
+  const parts = dob.split("-");
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return dob;
+}
+
+function formatEduQual(education?: string | null, qualification?: string | null): string {
+  const parts = [education, qualification].filter(Boolean);
+  return parts.length > 0 ? parts.join(" / ") : "—";
+}
+
+function dobToDisplay(dob: string | null | undefined): string {
+  if (!dob) return "";
+  const parts = dob.split("-");
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return dob;
+}
+
+function dobToStorage(dob: string): string {
+  if (!dob) return "";
+  const parts = dob.split("/");
+  if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  return dob;
+}
+
 const maritalLabels: Record<string, { label: string; className: string }> = {
   married:       { label: "વિવાહિત",    className: "bg-green-100 text-green-700" },
   unmarried:     { label: "અવિવાહિત",   className: "bg-blue-100 text-blue-700" },
@@ -104,7 +132,14 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
         <div className="space-y-3">
           <div><Label>ક્રમ</Label><Input type="number" value={form.sr_no} onChange={e => setForm({ ...form, sr_no: parseInt(e.target.value) || 1 })} /></div>
           <div><Label>નામ *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="સભ્યનું નામ" /></div>
-          <div><Label>સંબંધ *</Label><Input value={form.relation} onChange={e => setForm({ ...form, relation: e.target.value })} placeholder="દા.ત. પુત્ર, પત્ની" /></div>
+          <div>
+            <Label>સંબંધ *</Label>
+            <select value={form.relation} onChange={e => setForm({ ...form, relation: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
           <div>
             <Label>લગ્ન સ્થિતિ</Label>
             <select value={form.marital_status} onChange={e => setForm({ ...form, marital_status: e.target.value })}
@@ -116,15 +151,14 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
               <option value="chhutachheda">છૂટાછેડા</option>
             </select>
           </div>
-          <div><Label>જન્મ તારીખ</Label><Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="YYYY-MM-DD" /></div>
+          <div><Label>જન્મ તારીખ <span className="text-muted-foreground text-xs">(DD/MM/YYYY)</span></Label><Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="DD/MM/YYYY" /></div>
+          <div><Label>અભ્યાસ/લાયકાત</Label><Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ / B.Com" /></div>
           <div><Label>વ્યવસાય</Label><Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} /></div>
-          <div><Label>અભ્યાસ</Label><Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ" /></div>
-          <div><Label>લાયકાત</Label><Input value={form.qualification} onChange={e => setForm({ ...form, qualification: e.target.value })} placeholder="દા.ત. B.Com, ITI" /></div>
           <div><Label>મોબાઇલ નંબર</Label><Input value={form.mobile} onChange={e => setForm({ ...form, mobile: e.target.value })} /></div>
         </div>
         <div className="flex gap-3 mt-5">
           <Button
-            onClick={() => addMember.mutate({ id: homeId, data: { ...form, dob: form.dob || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } })}
+            onClick={() => addMember.mutate({ id: homeId, data: { ...form, dob: dobToStorage(form.dob) || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } })}
             disabled={addMember.isPending || !form.name || !form.relation}
             className="flex-1"
           >
@@ -209,7 +243,7 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
   const [form, setForm] = useState({
     sr_no: member.sr_no,
     name: member.name,
-    dob: member.dob || "",
+    dob: dobToDisplay(member.dob),
     occupation: member.occupation || "",
     relation: member.relation,
     marital_status: member.marital_status,
@@ -237,7 +271,11 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
           </div>
           <div>
             <Label>સંબંધ *</Label>
-            <Input value={form.relation} onChange={e => setForm({ ...form, relation: e.target.value })} />
+            <select value={form.relation} onChange={e => setForm({ ...form, relation: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
           </div>
           <div>
             <Label>લગ્ન સ્થિતિ</Label>
@@ -254,20 +292,16 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
             </select>
           </div>
           <div>
-            <Label>જન્મ તારીખ</Label>
-            <Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="YYYY-MM-DD" />
+            <Label>જન્મ તારીખ <span className="text-muted-foreground text-xs">(DD/MM/YYYY)</span></Label>
+            <Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="DD/MM/YYYY" />
+          </div>
+          <div>
+            <Label>અભ્યાસ/લાયકાત</Label>
+            <Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ / B.Com" />
           </div>
           <div>
             <Label>વ્યવસાય</Label>
             <Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} />
-          </div>
-          <div>
-            <Label>અભ્યાસ</Label>
-            <Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ" />
-          </div>
-          <div>
-            <Label>લાયકાત</Label>
-            <Input value={form.qualification} onChange={e => setForm({ ...form, qualification: e.target.value })} placeholder="દા.ત. B.Com, ITI" />
           </div>
           <div>
             <Label>મોબાઇલ નંબર</Label>
@@ -275,7 +309,7 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
           </div>
         </div>
         <div className="flex gap-3 mt-5">
-          <Button onClick={() => updateMember.mutate({ id: homeId, memberId: member.id, data: form })} disabled={updateMember.isPending || !form.name || !form.relation} className="flex-1">
+          <Button onClick={() => updateMember.mutate({ id: homeId, memberId: member.id, data: { ...form, dob: dobToStorage(form.dob) || undefined } })} disabled={updateMember.isPending || !form.name || !form.relation} className="flex-1">
             <Check className="w-4 h-4 mr-2" /> સાચવો
           </Button>
           <Button variant="outline" onClick={onClose} className="flex-1">રદ કરો</Button>
@@ -400,9 +434,8 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                       <th className="px-3 py-2">નામ</th>
                       <th className="px-3 py-2">સંબંધ</th>
                       <th className="px-3 py-2">જન્મ તારીખ</th>
+                      <th className="px-3 py-2">અભ્યાસ/લાયકાત</th>
                       <th className="px-3 py-2">વ્યવસાય</th>
-                      <th className="px-3 py-2">અભ્યાસ</th>
-                      <th className="px-3 py-2">લાયકાત</th>
                       <th className="px-3 py-2">લગ્ન</th>
                       <th className="px-3 py-2">મોબાઇલ</th>
                       <th className="px-3 py-2 text-right">ક્રિયા</th>
@@ -414,10 +447,9 @@ function HomeCard({ home, onRefresh }: { home: HomeType; onRefresh: () => void }
                         <td className="px-3 py-2 font-mono">{member.sr_no}</td>
                         <td className="px-3 py-2 font-semibold">{member.name}</td>
                         <td className="px-3 py-2">{member.relation}</td>
-                        <td className="px-3 py-2">{member.dob || "—"}</td>
+                        <td className="px-3 py-2">{formatDob(member.dob)}</td>
+                        <td className="px-3 py-2">{formatEduQual(member.education, member.qualification)}</td>
                         <td className="px-3 py-2">{member.occupation || "—"}</td>
-                        <td className="px-3 py-2">{member.education || "—"}</td>
-                        <td className="px-3 py-2">{member.qualification || "—"}</td>
                         <td className="px-3 py-2">
                           <MaritalBadge status={member.marital_status} />
                         </td>

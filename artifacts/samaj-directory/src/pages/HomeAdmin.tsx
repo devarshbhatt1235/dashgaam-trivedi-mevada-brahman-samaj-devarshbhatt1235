@@ -8,6 +8,8 @@ import { Plus, Trash2, Home as HomeIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
+
 const memberSchema = z.object({
   sr_no: z.coerce.number().min(1),
   name: z.string().min(1, "નામ જરૂરી છે"),
@@ -233,11 +235,18 @@ export default function HomeAdmin() {
                   </div>
                   <div className="space-y-2">
                     <Label>સંબંધ</Label>
-                    <Input {...form.register(`members.${index}.relation`)} placeholder="દા.ત. પુત્ર, પત્ની" />
+                    <Select {...form.register(`members.${index}.relation`)}>
+                      <option value="">-- પસંદ કરો --</option>
+                      {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>જન્મ તારીખ</Label>
                     <Input type="date" {...form.register(`members.${index}.dob`)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>અભ્યાસ/લાયકાત</Label>
+                    <Input {...form.register(`members.${index}.education`)} placeholder="દા.ત. 12 પાસ / B.Com" />
                   </div>
                   <div className="space-y-2">
                     <Label>વ્યવસાય</Label>
@@ -252,14 +261,6 @@ export default function HomeAdmin() {
                       <option value="vidhva">વિધવા</option>
                       <option value="chhutachheda">છૂટાછેડા</option>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>અભ્યાસ</Label>
-                    <Input {...form.register(`members.${index}.education`)} placeholder="દા.ત. 12 પાસ" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>લાયકાત</Label>
-                    <Input {...form.register(`members.${index}.qualification`)} placeholder="દા.ત. B.Com, ITI" />
                   </div>
                   <div className="space-y-2">
                     <Label>મોબાઇલ નંબર</Label>

@@ -22,6 +22,18 @@ function MaritalBadge({ status }: { status: string }) {
   );
 }
 
+function formatDob(dob: string | null | undefined): string {
+  if (!dob) return "—";
+  const parts = dob.split("-");
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return dob;
+}
+
+function formatEduQual(education?: string | null, qualification?: string | null): string {
+  const parts = [education, qualification].filter(Boolean);
+  return parts.length > 0 ? parts.join(" / ") : "—";
+}
+
 function buildHalSarnamu(home: {
   current_house_no?: string | null; current_area?: string | null; current_landmark?: string | null;
   current_city?: string | null; current_district?: string | null; current_pincode?: string | null;
@@ -137,9 +149,8 @@ export default function Directory() {
                                     <th className="px-4 py-3 font-semibold">નામ</th>
                                     <th className="px-4 py-3 font-semibold">સંબંધ</th>
                                     <th className="px-4 py-3 font-semibold">જન્મ તારીખ</th>
+                                    <th className="px-4 py-3 font-semibold">અભ્યાસ/લાયકાત</th>
                                     <th className="px-4 py-3 font-semibold">વ્યવસાય</th>
-                                    <th className="px-4 py-3 font-semibold">અભ્યાસ</th>
-                                    <th className="px-4 py-3 font-semibold">લાયકાત</th>
                                     <th className="px-4 py-3 font-semibold">સ્થિતિ</th>
                                     <th className="px-4 py-3 font-semibold">મોબાઇલ</th>
                                   </tr>
@@ -150,19 +161,18 @@ export default function Directory() {
                                       <td className="px-4 py-3">{member.sr_no}</td>
                                       <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
                                       <td className="px-4 py-3">{member.relation}</td>
-                                      <td className="px-4 py-3">{member.dob || "-"}</td>
-                                      <td className="px-4 py-3">{member.occupation || "-"}</td>
-                                      <td className="px-4 py-3">{member.education || "-"}</td>
-                                      <td className="px-4 py-3">{member.qualification || "-"}</td>
+                                      <td className="px-4 py-3">{formatDob(member.dob)}</td>
+                                      <td className="px-4 py-3">{formatEduQual(member.education, member.qualification)}</td>
+                                      <td className="px-4 py-3">{member.occupation || "—"}</td>
                                       <td className="px-4 py-3">
                                         <MaritalBadge status={member.marital_status} />
                                       </td>
-                                      <td className="px-4 py-3">{member.mobile || "-"}</td>
+                                      <td className="px-4 py-3">{member.mobile || "—"}</td>
                                     </tr>
                                   ))}
                                   {sortedMembers.length === 0 && (
                                     <tr>
-                                      <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+                                      <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                                         કોઈ સભ્યો નોંધાયેલા નથી
                                       </td>
                                     </tr>
