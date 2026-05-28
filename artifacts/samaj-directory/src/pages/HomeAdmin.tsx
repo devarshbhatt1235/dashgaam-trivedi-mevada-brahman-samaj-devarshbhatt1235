@@ -8,7 +8,7 @@ import { Plus, Trash2, Home as HomeIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 
-const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પતિ","પત્નિ","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
 
 const memberSchema = z.object({
   sr_no: z.coerce.number().min(1),

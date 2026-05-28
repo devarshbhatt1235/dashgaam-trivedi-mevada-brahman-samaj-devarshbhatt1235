@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 
-const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પતિ","પત્નિ","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
 
 function formatDob(dob: string | null | undefined): string {
   if (!dob) return "—";
