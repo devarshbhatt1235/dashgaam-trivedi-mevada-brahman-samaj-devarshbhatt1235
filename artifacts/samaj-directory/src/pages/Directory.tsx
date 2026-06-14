@@ -44,6 +44,9 @@ function buildHalSarnamu(home: {
   ].filter(Boolean).join(", ");
 }
 
+const MALE_RELATIONS = new Set(["પોતે","પિતા","ભાઈ","પતિ","પુત્ર","પોત્ર"]);
+const FEMALE_RELATIONS = new Set(["માતા","બહેન","પત્નિ","પુત્રી","પુત્રવધૂ","પોત્રી"]);
+
 export default function Directory() {
   const { data: homes, isLoading } = useGetHomes();
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,6 +59,12 @@ export default function Directory() {
       </div>
     );
   }
+
+  const allMembers = homes?.flatMap(h => h.members || []) || [];
+  const totalHomes = homes?.length || 0;
+  const totalMembers = allMembers.length;
+  const totalPurush = allMembers.filter(m => MALE_RELATIONS.has(m.relation)).length;
+  const totalStree = allMembers.filter(m => FEMALE_RELATIONS.has(m.relation)).length;
 
   const filteredHomes = homes?.filter((home) => {
     const term = searchTerm.toLowerCase();
@@ -83,6 +92,38 @@ export default function Directory() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+      </div>
+
+      {/* Stats boxes */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-orange-100 p-3 rounded-xl text-primary">
+            <HomeIcon className="w-6 h-6" />
+          </div>
+          <span className="text-3xl font-bold text-secondary">{totalHomes}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ ઘર</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
+            <Users className="w-6 h-6" />
+          </div>
+          <span className="text-3xl font-bold text-secondary">{totalMembers}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ સભ્ય</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-indigo-100 p-3 rounded-xl text-indigo-600">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          </div>
+          <span className="text-3xl font-bold text-secondary">{totalPurush}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ પુરુષ</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-pink-100 p-3 rounded-xl text-pink-500">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          </div>
+          <span className="text-3xl font-bold text-secondary">{totalStree}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ સ્ત્રી</span>
         </div>
       </div>
 

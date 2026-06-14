@@ -8,7 +8,7 @@ import { Plus, Trash2, Home as HomeIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 
-const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પતિ","પત્નિ","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી"];
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પતિ","પત્નિ","પુત્ર","પુત્રી","પુત્રવધૂ","પોત્ર","પોત્રી","અન્ય"];
 
 const memberSchema = z.object({
   sr_no: z.coerce.number().min(1),
@@ -16,6 +16,7 @@ const memberSchema = z.object({
   dob: z.string().optional(),
   occupation: z.string().optional(),
   relation: z.string().min(1, "સંબંધ જરૂરી છે"),
+  custom_relation: z.string().optional(),
   marital_status: z.enum(["married", "unmarried", "vidhur", "vidhva", "chhutachheda"]),
   mobile: z.string().optional(),
   education: z.string().optional(),
@@ -84,7 +85,14 @@ export default function HomeAdmin() {
   if (!user || user.role !== "home_admin") return <Redirect href="/login" />;
 
   const onSubmit = (data: FormValues) => {
-    createHomeMutation.mutate({ data });
+    const processed = {
+      ...data,
+      members: data.members.map(m => ({
+        ...m,
+        relation: m.relation === "અન્ય" ? (m.custom_relation?.trim() || "અન્ય") : m.relation,
+      })),
+    };
+    createHomeMutation.mutate({ data: processed });
   };
 
   return (
@@ -239,6 +247,13 @@ export default function HomeAdmin() {
                       <option value="">-- પસંદ કરો --</option>
                       {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
                     </Select>
+                    {form.watch(`members.${index}.relation`) === "અન્ય" && (
+                      <Input
+                        {...form.register(`members.${index}.custom_relation`)}
+                        placeholder="સંબંધ લખો..."
+                        className="mt-2"
+                      />
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>જન્મ તારીખ</Label>

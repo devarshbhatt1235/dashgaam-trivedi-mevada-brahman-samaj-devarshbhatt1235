@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 async function seedUsers() {
   const homeAdminPassword = await bcrypt.hash("home123", 10);
-  const superAdminPassword = await bcrypt.hash("Bhatt@1235", 10);
+  const superAdminPassword = await bcrypt.hash("super123", 10);
 
   const existing = await db.select().from(usersTable);
   if (existing.length > 0) {
