@@ -17,6 +17,7 @@ const memberSchema = z.object({
   occupation: z.string().optional(),
   relation: z.string().min(1, "સંબંધ જરૂરી છે"),
   custom_relation: z.string().optional(),
+  gender: z.string().optional(),
   marital_status: z.enum(["married", "unmarried", "vidhur", "vidhva", "chhutachheda"]),
   mobile: z.string().optional(),
   education: z.string().optional(),
@@ -254,6 +255,14 @@ export default function HomeAdmin() {
                         className="mt-2"
                       />
                     )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>લિંગ (Gender)</Label>
+                    <Select {...form.register(`members.${index}.gender`)}>
+                      <option value="">-- પસંદ કરો --</option>
+                      <option value="purush">પુરુષ</option>
+                      <option value="stree">સ્ત્રી</option>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>જન્મ તારીખ</Label>

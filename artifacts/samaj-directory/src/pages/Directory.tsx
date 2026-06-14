@@ -63,8 +63,8 @@ export default function Directory() {
   const allMembers = homes?.flatMap(h => h.members || []) || [];
   const totalHomes = homes?.length || 0;
   const totalMembers = allMembers.length;
-  const totalPurush = allMembers.filter(m => MALE_RELATIONS.has(m.relation)).length;
-  const totalStree = allMembers.filter(m => FEMALE_RELATIONS.has(m.relation)).length;
+  const totalPurush = allMembers.filter(m => (m as any).gender === "purush").length;
+  const totalStree = allMembers.filter(m => (m as any).gender === "stree").length;
 
   const filteredHomes = homes?.filter((home) => {
     const term = searchTerm.toLowerCase();

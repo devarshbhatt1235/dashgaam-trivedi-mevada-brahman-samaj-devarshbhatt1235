@@ -17,4 +17,5 @@ export interface UpdateMemberRequest {
   mobile?: string;
   education?: string;
   qualification?: string;
+  gender?: string;
 }

@@ -105,6 +105,7 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
     name: "",
     relation: "",
     customRelation: "",
+    gender: "",
     marital_status: "married",
     dob: "",
     occupation: "",
@@ -155,6 +156,15 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
               <option value="chhutachheda">છૂટાછેડા</option>
             </select>
           </div>
+          <div>
+            <Label>લિંગ (Gender)</Label>
+            <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              <option value="purush">પુરુષ</option>
+              <option value="stree">સ્ત્રી</option>
+            </select>
+          </div>
           <div><Label>જન્મ તારીખ <span className="text-muted-foreground text-xs">(DD/MM/YYYY)</span></Label><Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="DD/MM/YYYY" /></div>
           <div><Label>અભ્યાસ/લાયકાત</Label><Input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="દા.ત. 12 પાસ / B.Com" /></div>
           <div><Label>વ્યવસાય</Label><Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} /></div>
@@ -164,7 +174,7 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
           <Button
             onClick={() => {
               const finalRelation = form.relation === "અન્ય" ? (form.customRelation.trim() || "અન્ય") : form.relation;
-              addMember.mutate({ id: homeId, data: { ...form, relation: finalRelation, dob: dobToStorage(form.dob) || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } });
+              addMember.mutate({ id: homeId, data: { ...form, relation: finalRelation, gender: form.gender || undefined, dob: dobToStorage(form.dob) || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } });
             }}
             disabled={addMember.isPending || !form.name || !form.relation}
             className="flex-1"
@@ -255,6 +265,7 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
     occupation: member.occupation || "",
     relation: isKnownRelation ? member.relation : "અન્ય",
     customRelation: isKnownRelation ? "" : member.relation,
+    gender: (member as any).gender || "",
     marital_status: member.marital_status,
     mobile: member.mobile || "",
     education: member.education || "",
@@ -304,6 +315,15 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
             </select>
           </div>
           <div>
+            <Label>લિંગ (Gender)</Label>
+            <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              <option value="purush">પુરુષ</option>
+              <option value="stree">સ્ત્રી</option>
+            </select>
+          </div>
+          <div>
             <Label>જન્મ તારીખ <span className="text-muted-foreground text-xs">(DD/MM/YYYY)</span></Label>
             <Input value={form.dob} onChange={e => setForm({ ...form, dob: e.target.value })} placeholder="DD/MM/YYYY" />
           </div>
@@ -323,7 +343,7 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
         <div className="flex gap-3 mt-5">
           <Button onClick={() => {
             const finalRelation = form.relation === "અન્ય" ? (form.customRelation.trim() || "અન્ય") : form.relation;
-            updateMember.mutate({ id: homeId, memberId: member.id, data: { ...form, relation: finalRelation, dob: dobToStorage(form.dob) || undefined } });
+            updateMember.mutate({ id: homeId, memberId: member.id, data: { ...form, relation: finalRelation, gender: form.gender || undefined, dob: dobToStorage(form.dob) || undefined } });
           }} disabled={updateMember.isPending || !form.name || !form.relation} className="flex-1">
             <Check className="w-4 h-4 mr-2" /> સાચવો
           </Button>

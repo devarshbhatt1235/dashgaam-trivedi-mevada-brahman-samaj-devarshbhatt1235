@@ -18,5 +18,6 @@ export interface Member {
   mobile?: string | null;
   education?: string | null;
   qualification?: string | null;
+  gender?: string | null;
   home_id: string;
 }

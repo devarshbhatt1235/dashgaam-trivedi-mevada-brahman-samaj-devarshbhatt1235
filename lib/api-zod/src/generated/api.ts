@@ -187,6 +187,7 @@ export const GetHomesResponseItem = zod.object({
         mobile: zod.string().nullish(),
         education: zod.string().nullish(),
         qualification: zod.string().nullish(),
+        gender: zod.string().nullish(),
         home_id: zod.string(),
       }),
     )
@@ -228,6 +229,7 @@ export const CreateHomeBody = zod.object({
         mobile: zod.string().optional(),
         education: zod.string().optional(),
         qualification: zod.string().optional(),
+        gender: zod.string().optional(),
       }),
     )
     .optional(),
@@ -288,6 +290,7 @@ export const GetHomeResponse = zod.object({
         mobile: zod.string().nullish(),
         education: zod.string().nullish(),
         qualification: zod.string().nullish(),
+        gender: zod.string().nullish(),
         home_id: zod.string(),
       }),
     )
@@ -364,6 +367,7 @@ export const UpdateHomeResponse = zod.object({
         mobile: zod.string().nullish(),
         education: zod.string().nullish(),
         qualification: zod.string().nullish(),
+        gender: zod.string().nullish(),
         home_id: zod.string(),
       }),
     )
@@ -405,6 +409,7 @@ export const AddMemberBody = zod.object({
   mobile: zod.string().optional(),
   education: zod.string().optional(),
   qualification: zod.string().optional(),
+  gender: zod.string().optional(),
 });
 
 /**
@@ -427,6 +432,7 @@ export const UpdateMemberBody = zod.object({
   mobile: zod.string().optional(),
   education: zod.string().optional(),
   qualification: zod.string().optional(),
+  gender: zod.string().optional(),
 });
 
 export const UpdateMemberResponse = zod.object({
@@ -446,6 +452,7 @@ export const UpdateMemberResponse = zod.object({
   mobile: zod.string().nullish(),
   education: zod.string().nullish(),
   qualification: zod.string().nullish(),
+  gender: zod.string().nullish(),
   home_id: zod.string(),
 });
 

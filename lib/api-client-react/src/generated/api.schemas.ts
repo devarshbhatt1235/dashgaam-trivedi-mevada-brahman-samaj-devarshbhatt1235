@@ -109,6 +109,7 @@ export interface Member {
   mobile?: string | null;
   education?: string | null;
   qualification?: string | null;
+  gender?: string | null;
   home_id: string;
 }
 
@@ -133,6 +134,7 @@ export interface CreateMemberRequest {
   mobile?: string;
   education?: string;
   qualification?: string;
+  gender?: string;
 }
 
 export interface Address {
@@ -221,4 +223,5 @@ export interface UpdateMemberRequest {
   mobile?: string;
   education?: string;
   qualification?: string;
+  gender?: string;
 }

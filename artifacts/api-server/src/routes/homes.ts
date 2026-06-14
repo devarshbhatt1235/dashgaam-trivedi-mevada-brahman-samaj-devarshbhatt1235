@@ -17,6 +17,7 @@ function serializeMember(homeId: string, m: EmbeddedMember) {
     mobile: m.mobile ?? null,
     education: m.education ?? null,
     qualification: m.qualification ?? null,
+    gender: (m as any).gender ?? null,
   };
 }
 
@@ -178,7 +179,7 @@ router.post("/:id/members", requireAuth, requireRole("home_admin", "super_admin"
       return;
     }
 
-    const { sr_no, name, dob, occupation, relation, marital_status, mobile, education, qualification } = req.body;
+    const { sr_no, name, dob, occupation, relation, marital_status, mobile, education, qualification, gender } = req.body;
     if (!name || !relation) {
       res.status(400).json({ error: "name and relation required" });
       return;
@@ -194,6 +195,7 @@ router.post("/:id/members", requireAuth, requireRole("home_admin", "super_admin"
       mobile: mobile || null,
       education: education || null,
       qualification: qualification || null,
+      gender: gender || null,
     } as any);
 
     await home.save();
@@ -221,7 +223,7 @@ router.put("/:id/members/:memberId", requireAuth, requireRole("super_admin"), as
 
     const fields = [
       "sr_no", "name", "dob", "occupation", "relation",
-      "marital_status", "mobile", "education", "qualification",
+      "marital_status", "mobile", "education", "qualification", "gender",
     ] as const;
     for (const f of fields) {
       if (req.body[f] !== undefined) (member as any)[f] = req.body[f] ?? null;
