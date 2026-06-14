@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Redirect } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 
-const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પતિ","પત્નિ","પુત્રવધૂ","પોત્ર","પોત્રી"];
+const RELATION_OPTIONS = ["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પતિ","પત્નિ","પુત્રવધૂ","પોત્ર","પોત્રી","અન્ય"];
 
 function formatDob(dob: string | null | undefined): string {
   if (!dob) return "—";
@@ -104,6 +104,8 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
     sr_no: memberCount + 1,
     name: "",
     relation: "",
+    relation_other: "",
+    gender: "",
     marital_status: "married",
     dob: "",
     occupation: "",
@@ -139,6 +141,18 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
               <option value="">-- પસંદ કરો --</option>
               {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
+            {form.relation === "અન્ય" && (
+              <Input className="mt-1" value={form.relation_other} onChange={e => setForm({ ...form, relation_other: e.target.value })} placeholder="સંબંધ લખો..." />
+            )}
+          </div>
+          <div>
+            <Label>લિંગ (Gender)</Label>
+            <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              <option value="purush">પુરૂષ</option>
+              <option value="stree">સ્ત્રી</option>
+            </select>
           </div>
           <div>
             <Label>લગ્ન સ્થિતિ</Label>
@@ -158,7 +172,10 @@ function AddMemberModal({ homeId, memberCount, onClose, onSaved }: { homeId: str
         </div>
         <div className="flex gap-3 mt-5">
           <Button
-            onClick={() => addMember.mutate({ id: homeId, data: { ...form, dob: dobToStorage(form.dob) || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } })}
+            onClick={() => {
+              const relation = form.relation === "અન્ય" ? (form.relation_other || "અન્ય") : form.relation;
+              addMember.mutate({ id: homeId, data: { ...form, relation, gender: form.gender || undefined, dob: dobToStorage(form.dob) || undefined, occupation: form.occupation || undefined, education: form.education || undefined, qualification: form.qualification || undefined, mobile: form.mobile || undefined } });
+            }}
             disabled={addMember.isPending || !form.name || !form.relation}
             className="flex-1"
           >
@@ -240,12 +257,15 @@ function EditHomeModal({ home, onClose, onSaved }: { home: HomeType; onClose: ()
 
 function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member; homeId: string; onClose: () => void; onSaved: () => void }) {
   const { toast } = useToast();
+  const isOtherRelation = !["પોતે","પિતા","માતા","ભાઈ","બહેન","પુત્ર","પુત્રી","પતિ","પત્નિ","પુત્રવધૂ","પોત્ર","પોત્રી"].includes(member.relation);
   const [form, setForm] = useState({
     sr_no: member.sr_no,
     name: member.name,
     dob: dobToDisplay(member.dob),
     occupation: member.occupation || "",
-    relation: member.relation,
+    relation: isOtherRelation ? "અન્ય" : member.relation,
+    relation_other: isOtherRelation ? member.relation : "",
+    gender: (member as any).gender || "",
     marital_status: member.marital_status,
     mobile: member.mobile || "",
     education: member.education || "",
@@ -275,6 +295,18 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
               className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
               <option value="">-- પસંદ કરો --</option>
               {RELATION_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+            {form.relation === "અન્ય" && (
+              <Input className="mt-1" value={form.relation_other} onChange={e => setForm({ ...form, relation_other: e.target.value })} placeholder="સંબંધ લખો..." />
+            )}
+          </div>
+          <div>
+            <Label>લિંગ (Gender)</Label>
+            <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background">
+              <option value="">-- પસંદ કરો --</option>
+              <option value="purush">પુરૂષ</option>
+              <option value="stree">સ્ત્રી</option>
             </select>
           </div>
           <div>
@@ -309,7 +341,10 @@ function EditMemberModal({ member, homeId, onClose, onSaved }: { member: Member;
           </div>
         </div>
         <div className="flex gap-3 mt-5">
-          <Button onClick={() => updateMember.mutate({ id: homeId, memberId: member.id, data: { ...form, dob: dobToStorage(form.dob) || undefined } })} disabled={updateMember.isPending || !form.name || !form.relation} className="flex-1">
+          <Button onClick={() => {
+            const relation = form.relation === "અન્ય" ? (form.relation_other || "અન્ય") : form.relation;
+            updateMember.mutate({ id: homeId, memberId: member.id, data: { ...form, relation, gender: form.gender || undefined, dob: dobToStorage(form.dob) || undefined } });
+          }} disabled={updateMember.isPending || !form.name || !form.relation} className="flex-1">
             <Check className="w-4 h-4 mr-2" /> સાચવો
           </Button>
           <Button variant="outline" onClick={onClose} className="flex-1">રદ કરો</Button>

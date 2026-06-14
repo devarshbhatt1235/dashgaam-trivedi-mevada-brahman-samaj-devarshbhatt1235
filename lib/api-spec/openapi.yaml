@@ -670,6 +670,9 @@ components:
         qualification:
           type: string
           nullable: true
+        gender:
+          type: string
+          nullable: true
         home_id:
           type: string
       required:
@@ -701,6 +704,8 @@ components:
         education:
           type: string
         qualification:
+          type: string
+        gender:
           type: string
       required:
         - sr_no
@@ -881,4 +886,6 @@ components:
         education:
           type: string
         qualification:
+          type: string
+        gender:
           type: string

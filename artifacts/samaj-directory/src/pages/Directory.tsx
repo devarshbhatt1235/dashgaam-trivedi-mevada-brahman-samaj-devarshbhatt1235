@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGetHomes } from "@workspace/api-client-react";
 import { Card, Input } from "@/components/ui-elements";
-import { Search, MapPin, HomeIcon, Users } from "lucide-react";
+import { Search, MapPin, HomeIcon, Users, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -71,6 +71,11 @@ export default function Directory() {
     );
   });
 
+  const totalHomes = homes?.length || 0;
+  const totalMembers = homes?.reduce((sum, h) => sum + (h.members?.length || 0), 0) || 0;
+  const totalPurush = homes?.reduce((sum, h) => sum + (h.members?.filter(m => (m as any).gender === "purush").length || 0), 0) || 0;
+  const totalStree = homes?.reduce((sum, h) => sum + (h.members?.filter(m => (m as any).gender === "stree").length || 0), 0) || 0;
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -83,6 +88,30 @@ export default function Directory() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+      </div>
+
+      {/* Stat Boxes */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-orange-100 p-3 rounded-full text-primary"><HomeIcon className="w-6 h-6" /></div>
+          <span className="text-3xl font-bold text-secondary">{totalHomes}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ ઘર</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-blue-100 p-3 rounded-full text-blue-600"><Users className="w-6 h-6" /></div>
+          <span className="text-3xl font-bold text-secondary">{totalMembers}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ સભ્ય</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-indigo-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-indigo-100 p-3 rounded-full text-indigo-600"><User className="w-6 h-6" /></div>
+          <span className="text-3xl font-bold text-secondary">{totalPurush}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ પુરૂષ</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-pink-100 shadow-sm p-5 flex flex-col items-center gap-2">
+          <div className="bg-pink-100 p-3 rounded-full text-pink-500"><User className="w-6 h-6" /></div>
+          <span className="text-3xl font-bold text-secondary">{totalStree}</span>
+          <span className="text-sm text-muted-foreground font-medium">કુલ સ્ત્રી</span>
         </div>
       </div>
 
