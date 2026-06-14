@@ -17,5 +17,4 @@ export interface CreateMemberRequest {
   mobile?: string;
   education?: string;
   qualification?: string;
-  gender?: string;
 }

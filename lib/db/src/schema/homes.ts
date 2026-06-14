@@ -11,7 +11,6 @@ const memberSchema = new Schema({
   // New fields:
   education: { type: String, default: null }, // અભ્યાસ
   qualification: { type: String, default: null }, // લાયકાત
-  gender: { type: String, default: null }, // પુરુષ / સ્ત્રી
 });
 
 export type EmbeddedMember = InferSchemaType<typeof memberSchema> & {
@@ -52,7 +51,6 @@ export type Member = {
   mobile?: string | null;
   education?: string | null;
   qualification?: string | null;
-  gender?: string | null;
   home_id: string;
 };
 
