@@ -1,36 +1,26 @@
 import bcrypt from "bcryptjs";
-import { db } from "@workspace/db";
-import { usersTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { connectMongo, UserModel } from "@workspace/db";
 
 async function seedUsers() {
-  const homeAdminPassword = await bcrypt.hash("home123", 10);
-  const superAdminPassword = await bcrypt.hash("super123", 10);
+  await connectMongo();
 
-  const existing = await db.select().from(usersTable);
-  if (existing.length > 0) {
+  const existing = await UserModel.countDocuments();
+  if (existing > 0) {
+    const users = await UserModel.find({}, "username role").lean();
     console.log(
       "Users already seeded:",
-      existing.map((u) => u.username).join(", "),
+      users.map((u) => `${u.username} (${u.role})`).join(", "),
     );
     process.exit(0);
   }
 
-  const users = await db
-    .insert(usersTable)
-    .values([
-      {
-        username: "homeadmin",
-        password: homeAdminPassword,
-        role: "home_admin",
-      },
-      {
-        username: "superadmin",
-        password: superAdminPassword,
-        role: "super_admin",
-      },
-    ])
-    .returning();
+  const homeAdminPassword = await bcrypt.hash("home123", 10);
+  const superAdminPassword = await bcrypt.hash("super123", 10);
+
+  const users = await UserModel.insertMany([
+    { username: "homeadmin", password: homeAdminPassword, role: "home_admin" },
+    { username: "superadmin", password: superAdminPassword, role: "super_admin" },
+  ]);
 
   console.log("Seeded users:");
   users.forEach((u) => console.log(`  - ${u.username} (${u.role})`));
